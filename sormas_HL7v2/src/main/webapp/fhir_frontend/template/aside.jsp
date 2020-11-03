@@ -70,6 +70,12 @@
                                             <p style="font-size:12px">Operations</p>
                                         </a>
                                     </li-->
+                                    <li class="nav-item">
+                                        <a href="greport.jsp" class="nav-link">
+                                            <i class="fas fa-cogs nav-icon"></i>
+                                            <p style="font-size:12px">Generate Report</p>
+                                        </a>
+                                    </li>
                                 </ul>
                             </li>
 
