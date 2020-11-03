@@ -8,6 +8,9 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 
 <%
+    if(session.getAttribute("xloggedx") == null || session.getAttribute("xloggedx") != "true" ){
+    response.sendRedirect(request.getContextPath());
+    }
         PreparedStatement ps;
         ResultSet rx;
         Class.forName("com.mysql.jdbc.Driver");
@@ -73,7 +76,7 @@ finally{
                                         <span class="info-box-icon bg-info elevation-1"><i class="fa fa-hospital"></i></span>
                                         <%
                                             String[] _url = ConffileCatcher.fileCatcher("passed");
-                                            System.out.println("values : "+_url[1].toString() + _url[13].toString());
+                                        //    System.out.println("values : "+_url[1].toString() + _url[13].toString());
                                             
                                             
                                             session.setAttribute("dhis_url", _url[10].toString());
@@ -83,7 +86,7 @@ finally{
                                             session.setAttribute("country_code", _url[13].toString());
                                             
                                             //debugger
-                                            System.out.println("WEAREASE + "+_url[12].toString() + _url[13].toString());
+                                          //  System.out.println("WEAREASE + "+_url[12].toString() + _url[13].toString());
 
                                             String totalOrg = sourceDTO.totalORGinDB();
                                             String totalDest = sourceDTO.totalDestDB();

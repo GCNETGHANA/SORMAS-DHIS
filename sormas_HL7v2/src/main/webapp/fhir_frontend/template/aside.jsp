@@ -64,12 +64,6 @@
                                             <p style="font-size:12px">Maintenance</p>
                                         </a>
                                     </li>
-                                     <li class="nav-item">
-                                        <a href="greport.jsp" class="nav-link">
-                                            <i class="fas fa-cogs nav-icon"></i>
-                                            <p style="font-size:12px">Generate Report</p>
-                                        </a>
-                                    </li>
                                     <!--li class="nav-item">
                                         <a href="sormas2.html" class="nav-link">
                                             <i class="fas fa-exchange-alt nav-icon"></i>

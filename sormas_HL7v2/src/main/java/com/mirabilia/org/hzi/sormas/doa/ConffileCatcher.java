@@ -12,7 +12,6 @@ public class ConffileCatcher {
 
    // public static void main(String[] args) {
         public static String[] fileCatcher(String valx){
-            System.out.println("lllll");
             String val_url = "";
             String val_host = "";
             String val_port = "";
@@ -38,7 +37,6 @@ public class ConffileCatcher {
             
             if(valx.equalsIgnoreCase("passed")){
         try {
-           
             File myObj = new File(System.getProperty("user.home") + File.separator + "somars.conf");
             if(myObj.exists()){
             Scanner myReader = new Scanner(myObj);

@@ -281,17 +281,16 @@ public class AggregrateController {
 
     }
 
-    public static String MetadaJsonSender() throws ParseException {
+    public static String MetadaJsonSender(String paths_, String usn, String psw) throws ParseException {
+        
         String ret = "opps... Something not right";
 
         StringBuilder sb = new StringBuilder();
-        String filePath =System.getProperty("user.dir") + "/webapps/ROOT/dhis_processor";
-        System.out.println(filePath);
         String http = httpx+"/api/metadata";
 
         HttpURLConnection urlConnection = null;
-        String name = "admin";
-        String password = "district";
+        String name = usn;
+        String password = psw;
 
         String authString = name + ":" + password;
 
@@ -312,9 +311,9 @@ public class AggregrateController {
             //  System.out.println();
             JSONParser parser = new JSONParser();
 
-            JSONObject json = (JSONObject) parser.parse(readAllBytesJava7(filePath));
+            JSONObject json = (JSONObject) parser.parse(paths_);
 
-            // System.out.println(json.toString());
+             System.out.println(json.toString());
             //  File file = new File(this.getClass().getClassLoader().getResource("someName.json").getFile());
             OutputStreamWriter out = new OutputStreamWriter(urlConnection.getOutputStream());
             out.write(json.toString());
@@ -340,8 +339,10 @@ public class AggregrateController {
                 System.out.println("finally Code : " + HttpResult);
                 if (HttpResult == 401) {
                     System.out.println("Username and Pass not working");
+                    
+                    ret = "Username and Pass not working";
 
-                    // return;
+                     return ret;
                 }
             }
         } catch (MalformedURLException localMalformedURLException) {

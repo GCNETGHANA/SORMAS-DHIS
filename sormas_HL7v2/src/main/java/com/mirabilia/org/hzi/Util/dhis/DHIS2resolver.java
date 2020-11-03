@@ -25,20 +25,11 @@
  */
 package com.mirabilia.org.hzi.Util.dhis;
 
-import static com.mirabilia.org.hzi.Util.fhir.PusttoFHIR.urlConnection;
-import com.mirabilia.org.hzi.sormas.doa.ConffileCatcher;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.lang.reflect.Field;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.codec.binary.Base64;
@@ -48,8 +39,7 @@ import org.apache.commons.codec.binary.Base64;
  * @author Mathew Official
  */
 public class DHIS2resolver {
-
-    public static String getDemAll(String pg_url) {
+     public static String getDemAll(String pg_url) {
 
         HttpURLConnection urlConnection = null;
         String name = "admin";
@@ -68,12 +58,12 @@ public class DHIS2resolver {
             urlConnection.setUseCaches(true);
             urlConnection.setConnectTimeout(2000);
             urlConnection.setReadTimeout(2000);
-            urlConnection.setRequestProperty("Content-Type", "application/json");
+             urlConnection.setRequestProperty("Content-Type", "application/json");
             urlConnection.connect();
 
             int HttpResult = urlConnection.getResponseCode();
             //debug  
-            // System.out.println("######cccccccccccc####Outreach Session HTTP Return Code = " + HttpResult);
+           // System.out.println("######cccccccccccc####Outreach Session HTTP Return Code = " + HttpResult);
 
             if (HttpResult == 200) {
                 BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream(), "utf-8"));
@@ -114,33 +104,36 @@ public class DHIS2resolver {
                 return sb.toString();
             }
 
-        } catch (IOException ex) {
-            Logger.getLogger(DHIS2resolver.class.getName()).log(Level.SEVERE, null, ex);
-
-        } finally {
-
+        } 
+         catch (IOException ex) {
+             Logger.getLogger(DHIS2resolver.class.getName()).log(Level.SEVERE, null, ex);
+            
+         }        finally {
+            
             /**
-             * if (1==2){ try { String string = "2020-02-22 22:13:50.948";
-             * SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd
-             * HH:mm:ss.SSS"); java.sql.Timestamp datetime = new
-             * Timestamp(formatter.parse(string).getTime()); //
-             * System.out.println("DatedTime: " + datetime.toString());
-             *
-             * System.err.println("FIXED: Warning!"); } catch (ParseException
-             * ex) {
-             * Logger.getLogger(resolver.class.getName()).log(Level.SEVERE,
-             * null, ex); }
-             *
-             * }
-             *
-             */
-        }
-        //  System.out.println(sb.toString());
-        return sb.toString();
+             * if (1==2){
+            try {
+                String string = "2020-02-22 22:13:50.948";
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+                java.sql.Timestamp datetime = new Timestamp(formatter.parse(string).getTime());
+                //   System.out.println("DatedTime: " + datetime.toString());
+
+                System.err.println("FIXED: Warning!");
+            } catch (ParseException ex) {
+        Logger.getLogger(resolver.class.getName()).log(Level.SEVERE, null, ex);
     }
 
-    //This method enable downloading of a long connection...
-    public static String getDemAllLong(String pg_url) {
+        }
+        **/
+        }
+      //  System.out.println(sb.toString());
+        return sb.toString();
+    }
+     
+     
+     //This method enable downloading of a long connection...
+     
+     public static String getDemAllLong(String pg_url) {
 
         HttpURLConnection urlConnection = null;
         String name = "admin";
@@ -159,12 +152,12 @@ public class DHIS2resolver {
             urlConnection.setUseCaches(true);
             urlConnection.setConnectTimeout(100000);
             urlConnection.setReadTimeout(100000);
-            urlConnection.setRequestProperty("Content-Type", "application/json");
+             urlConnection.setRequestProperty("Content-Type", "application/json");
             urlConnection.connect();
 
             int HttpResult = urlConnection.getResponseCode();
             //debug  
-            // System.out.println("######cccccccccccc####Outreach Session HTTP Return Code = " + HttpResult);
+           // System.out.println("######cccccccccccc####Outreach Session HTTP Return Code = " + HttpResult);
 
             if (HttpResult == 200) {
                 BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream(), "utf-8"));
@@ -205,49 +198,50 @@ public class DHIS2resolver {
                 return sb.toString();
             }
 
-        } catch (IOException ex) {
-            Logger.getLogger(DHIS2resolver.class.getName()).log(Level.SEVERE, null, ex);
-
-        } finally {
-
+        } 
+         catch (IOException ex) {
+             Logger.getLogger(DHIS2resolver.class.getName()).log(Level.SEVERE, null, ex);
+            
+         }        finally {
+            
             /**
-             * if (1==2){ try { String string = "2020-02-22 22:13:50.948";
-             * SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd
-             * HH:mm:ss.SSS"); java.sql.Timestamp datetime = new
-             * Timestamp(formatter.parse(string).getTime()); //
-             * System.out.println("DatedTime: " + datetime.toString());
-             *
-             * System.err.println("FIXED: Warning!"); } catch (ParseException
-             * ex) {
-             * Logger.getLogger(resolver.class.getName()).log(Level.SEVERE,
-             * null, ex); }
-             *
-             * }
-             *
-             */
-        }
-        //  System.out.println(sb.toString());
-        return sb.toString();
+             * if (1==2){
+            try {
+                String string = "2020-02-22 22:13:50.948";
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+                java.sql.Timestamp datetime = new Timestamp(formatter.parse(string).getTime());
+                //   System.out.println("DatedTime: " + datetime.toString());
+
+                System.err.println("FIXED: Warning!");
+            } catch (ParseException ex) {
+        Logger.getLogger(resolver.class.getName()).log(Level.SEVERE, null, ex);
     }
 
-    public static String getDemAllfromFHIR(String pg_url) {
+        }
+        **/
+        }
+      //  System.out.println(sb.toString());
+        return sb.toString();
+    }
+     
+     
+      public static String getDemAllfromFHIR(String pg_url) {
 
         HttpURLConnection urlConnection = null;
         StringBuilder sb = new StringBuilder();
         /**
-         * String name = "field"; String password = "Passcode1!x";
-         *
-         *
-         * String authString = name + ":" + password; byte[] authEncBytes =
-         * Base64.encodeBase64(authString.getBytes()); String authStringEnc =
-         * new String(authEncBytes);
-        *
-         */
+        String name = "field";
+        String password = "Passcode1!x";
+        
+
+        String authString = name + ":" + password;
+        byte[] authEncBytes = Base64.encodeBase64(authString.getBytes());
+        String authStringEnc = new String(authEncBytes);
+        **/
         try {
             URL url = new URL(pg_url);
             urlConnection = (HttpURLConnection) url.openConnection();
-            //  urlConnection.setRequestProperty("Authorization", "Basic " + authStringEnc);
-
+          //  urlConnection.setRequestProperty("Authorization", "Basic " + authStringEnc);
             urlConnection.setDoOutput(true);
             urlConnection.setRequestMethod("GET");
             urlConnection.setUseCaches(true);
@@ -267,6 +261,7 @@ public class DHIS2resolver {
                 }
                 br.close();
 
+               
             } else {
                 //response.setStatus(502, "DHIS2 Not there!");
                 System.out.println("####CCCCCCCCCCCCCC" + urlConnection.getInputStream().toString());
@@ -282,147 +277,13 @@ public class DHIS2resolver {
                 return sb.toString();
             }
 
-        } catch (IOException ex) {
-            Logger.getLogger(DHIS2resolver.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-
+        } 
+         catch (IOException ex) {
+             Logger.getLogger(DHIS2resolver.class.getName()).log(Level.SEVERE, null, ex);
+         }        finally {
+          
         }
         return sb.toString();
     }
-
-    public static void PostMethod(String pg_url, List data, String dataKey) {
-
-        String[] _url = ConffileCatcher.fileCatcher("passed");
-        String _api_base = _url[10].toString();
-
-        HttpURLConnection urlConnection = null;
-        String name = "admin";
-        String password = "district";
-        StringBuilder sb = new StringBuilder();
-
-        String authString = name + ":" + password;
-        byte[] authEncBytes = Base64.encodeBase64(authString.getBytes());
-        String authStringEnc = new String(authEncBytes);
-
-        try {
-
-         
-
-            URL url = new URL(_api_base + pg_url);
-            urlConnection = (HttpURLConnection) url.openConnection();
-            urlConnection.setRequestProperty("Authorization", "Basic " + authStringEnc);
-            urlConnection.setDoOutput(true);
-            urlConnection.setRequestMethod("POST");
-            urlConnection.setUseCaches(true);
-            urlConnection.setConnectTimeout(10000);
-            urlConnection.setReadTimeout(10000);
-            urlConnection.setRequestProperty("Content-Type", "application/json");
-
-            urlConnection.connect();
-
-            OutputStreamWriter out = new OutputStreamWriter(urlConnection.getOutputStream());
-            out.write(("{ \"" + dataKey + "\": " + ListToJson(data) + "}"));
-            out.close();
-
-            int HttpResult = urlConnection.getResponseCode();
-           
-
-            if (HttpResult == 200) {
-               
-                BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream(), "utf-8"));
-                String line = null;
-                while ((line = br.readLine()) != null) {
-                    sb.append(line + "\n");
-                }
-                System.out.println(sb.toString());
-                br.close();
-
-            } else {
-                System.out.println("Error occured in posting request");
-
-            }
-
-        } catch (IOException ex) {
-            System.out.println(ex);
-            Logger.getLogger(DHIS2resolver.class.getName()).log(Level.SEVERE, null, ex);
-
-        } catch (Exception ec) {
-            System.err.println(ec);
-        } finally {
-            System.out.println("error occurred");
-            /**
-             * if (1==2){ try { String string = "2020-02-22 22:13:50.948";
-             * SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd
-             * HH:mm:ss.SSS"); java.sql.Timestamp datetime = new
-             * Timestamp(formatter.parse(string).getTime()); //
-             * System.out.println("DatedTime: " + datetime.toString());
-             *
-             * System.err.println("FIXED: Warning!"); } catch (ParseException
-             * ex) {
-             * Logger.getLogger(resolver.class.getName()).log(Level.SEVERE,
-             * null, ex); }
-             *
-             * }
-             *
-             */
-        }
-        //  System.out.println(sb.toString());
-        return;
-
-    }
-
-    public static Map<String, Object> ObjectToMap(Object obj) {
-        Map<String, Object> map = new HashMap<>();
-        for (Field field : obj.getClass().getDeclaredFields()) {
-            field.setAccessible(true);
-            try {
-                map.put(field.getName(), field.get(obj));
-            } catch (Exception e) {
-            }
-        }
-        return map;
-    }
-
-    public static List<Map<String, Object>> ListToMap(List list) {
-        List<Map<String, Object>> _list = new ArrayList<Map<String, Object>>();
-        for (Object obj : list) {
-            _list.add(ObjectToMap(obj));
-        }
-        return _list;
-    }
-
-    public static String MapToJson(Map<String, Object> obj) {
-        StringBuilder postData = new StringBuilder();
-
-        try {
-            for (Map.Entry<String, Object> param : obj.entrySet()) {
-                if (postData.length() != 0) {
-                    postData.append(',');
-                }
-                postData.append("\"" + URLEncoder.encode(param.getKey(), "UTF-8") + "\"");
-                postData.append(':');
-                postData.append("\"" + URLEncoder.encode(String.valueOf(param.getValue()), "UTF-8") + "\"");
-            }
-        } catch (Exception e) {
-
-        }
-
-        return "{" + postData.toString() + "}";
-    }
-
-    public static String ListToJson(List list) {
-        List<Map<String, Object>> _list = ListToMap(list);
-
-        StringBuilder postData = new StringBuilder();
-        for (Map<String, Object> obj : _list) {
-            if (postData.length() != 0) {
-                postData.append(',');
-            }
-            postData.append(MapToJson(obj));
-        }
-        System.out.println(postData.toString());
-        return "[" + postData.toString() + "]";
-
-    }
-
+    
 }
