@@ -68,155 +68,18 @@ import javax.servlet.http.HttpServletResponse;
 public class greport extends HttpServlet {
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>now in localizer");
-        try {
-            String tkbck = "";
-
-            PreparedStatement ps;
-            ResultSet rx;
-
-            PreparedStatement ps1;
-            ResultSet rx1;
-
-            PreparedStatement ps2;
-            ResultSet rx2;
-
-            PreparedStatement ps3;
-            ResultSet rx3;
-
-            Class.forName("org.postgresql.Driver");
-            Connection conn = DbConnector.getPgConnection();
-            String str = "";
-
-            //loop through sormas local and get infrastructure data by level into mysql local db for futher use by the adapter.
-            try {
-                if (request.getParameter("del_all") != null && "true".equals(request.getParameter("del_all"))) {
-
-                    Localizer_Deleter();
-
-                    if (1 == 1) {
-
-                        System.out.println("yes!!!");
-                    }
-
-                }
-
-                if (request.getParameter("rg") != null && "true".equals(request.getParameter("rg"))) {
-                    //System.out.println("region? !"+request.getParameter("rg"));
-                    ps = conn.prepareStatement("SELECT changedate, uuid, externalid, name, id, creationdate FROM region;");
-                    rx = ps.executeQuery();
-                    while (rx.next()) {
-                        String cf = "";
-                        if (rx.getString(3) == null) {
-                            cf = "0";
-                        } else {
-                            cf = rx.getString(3);
-                        }
-                        getterSetters.Localizer(rx.getString(1), rx.getString(2), cf, "2", rx.getString(4), rx.getString(5), "", rx.getString(6));
-
-                    }
-                    tkbck = "finised pulling state data... successful";
-                    System.out.println(tkbck);
-                }
-                if (request.getParameter("ds") != null && "true".equals(request.getParameter("ds"))) {
-
-                    ps1 = conn.prepareStatement("SELECT changedate, uuid, externalid, name, id, region_id, creationdate FROM district;");
-                    rx1 = ps1.executeQuery();
-                    while (rx1.next()) {
-                        String cv = "";
-                        if (rx1.getString(3) == null) {
-                            cv = "0";
-                        } else {
-                            cv = rx1.getString(3);
-                        }
-                        getterSetters.Localizer(rx1.getString(1), rx1.getString(2), cv, "3", rx1.getString(4), rx1.getString(5), rx1.getString(6), rx1.getString(7));
-                    }
-                    tkbck = "finised pulling LGA / District data... successful";
-                    System.out.println(tkbck);
-                }
-
-                if (request.getParameter("co") != null && "true".equals(request.getParameter("co"))) {
-
-                    System.out.println("ward" + request.getParameter("co"));
-                    ps2 = conn.prepareStatement("SELECT changedate, uuid, externalid, name, id, district_id, creationdate FROM community;");
-                    rx2 = ps2.executeQuery();
-                    while (rx2.next()) {
-                        String cz = "";
-                        if (rx2.getString(3) == null) {
-                            cz = "0";
-                        } else {
-                            cz = rx2.getString(3);
-                        }
-                        // getterSetters.Localizer(ch, cm, cc, cx, co);
-                        getterSetters.Localizer(rx2.getString(1), rx2.getString(2), cz, "4", rx2.getString(4), rx2.getString(5), rx2.getString(6), rx2.getString(7));
-                    }
-                    tkbck = "finised pulling Ward/Community data... NOW PULLING HF.. This will take some minutes";
-                    System.out.println(tkbck);
-                }
-
-                if (request.getParameter("fa") != null && "true".equals(request.getParameter("fa"))) {
-                    System.out.println("health facility !" + request.getParameter("fa"));
-                    ps3 = conn.prepareStatement("SELECT changedate, uuid, externalid, name, id, community_id, creationdate FROM facility;");
-                    rx3 = ps3.executeQuery();
-                    while (rx3.next()) {
-                        String cq = "";
-                        if (rx3.getString(3) == null) {
-                            cq = "0";
-                        } else {
-                            cq = rx3.getString(3);
-                        }
-                        getterSetters.Localizer(rx3.getString(1), rx3.getString(2), cq, "5", rx3.getString(4), rx3.getString(5), rx3.getString(6), rx3.getString(7));
-                    }
-                    tkbck = "finised pulling facility data... successful";
-                    System.out.println(tkbck);
-                }
-                //  out.write("<script> var dd = document.getElementById('d_text').innerHTML = 'processing ward/community... done.';</script>");
-                //  System.out.println(lister);
-                conn.close();
-
-                if (tkbck.isEmpty()) {
-                    response.setContentType("text/plain;charset=UTF-8");
-                    response.setStatus(200);
-                    ServletOutputStream sout = response.getOutputStream();
-
-                    sout.print(tkbck);
-                } else {
-                    response.setContentType("text/plain;charset=UTF-8");
-                    response.setStatus(200);
-                    ServletOutputStream sout = response.getOutputStream();
-
-                    sout.print("something is wrong! in localizer");
-
-                }
-
-            } catch (SQLException ex) {
-                out.print("SQLException: " + ex.getMessage());
-                out.print("SQLState: " + ex.getSQLState());
-                out.print("VendorError: " + ex.getErrorCode());
-            }
-
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(localizerz.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-    }
-
-    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        String year, month = "";
         Map<String, String> payloadRequest = getBody(request);
-//        System.out.println(payloadRequest);
+        int year = Integer.parseInt(payloadRequest.get("year"));
+        int month = Integer.parseInt(payloadRequest.get("month"));
+
         try {
             Class.forName("org.postgresql.Driver");
             Connection conn = DbConnector.getPgConnection();
             String str = "";
-//            PreparedStatement ps;
             ResultSet rx;
-//             ps = conn.prepareStatement("SELECT * from cases Where date_part('year', reportdate) = ? AND date_part('month', reportdate) = ?");
 
             List<AgeRange> ages = AgeRange.list();
 
@@ -233,11 +96,11 @@ public class greport extends HttpServlet {
             }
 
             NamedParameterStatement ps = new NamedParameterStatement(conn, stmt.toString());
-            ps.setInt("year", Integer.parseInt(payloadRequest.get("year")));
-            ps.setInt("month", Integer.parseInt(payloadRequest.get("month")));
+            ps.setInt("year", year);
+            ps.setInt("month", month);
 
             rx = ps.executeQuery();
-            //System.out.println(rx.toString());
+
             List<DhimsDataValue> dhimsList = new ArrayList<DhimsDataValue>();
             while (rx.next()) {
                 DhimsDataValue dh = new DhimsDataValue(rx.getString("dataElement"), rx.getString("categoryOptionCombo"), rx.getString("period"), rx.getString("orgUnit"), rx.getString("value"));
@@ -247,8 +110,6 @@ public class greport extends HttpServlet {
                 dhimsList.add(dh);
             }
             
-            //System.out.println(dhimsList);
-            
             List<DhimsDataValue> dhimsList2 = new ArrayList<DhimsDataValue>();
             for (DhimsDataValue d : dhimsList) {
                 if (d.orgUnit.length() > 0)
@@ -256,8 +117,10 @@ public class greport extends HttpServlet {
             }
             dhimsList = dhimsList2.subList(0, 1);
             dhimsList2 = null;
+
+            System.out.println("log2: " + dhimsList.size());
             
-            DHIS2resolver.PostMethod("/api/dataValueSets", dhimsList, "dataValues");
+            // DHIS2resolver.PostMethod("/api/dataValueSets", dhimsList, "dataValues");
 
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(greport.class.getName()).log(Level.SEVERE, null, ex);
@@ -270,25 +133,24 @@ public class greport extends HttpServlet {
     }
 
     static String report_deaths(String column, String gender, int ageMin, int ageMax) {
-        System.out.println(categoryOptionCombo.code(column));
         return "SELECT\n"
-                + "	c.healthfacility_id::VARCHAR orgUnit,\n"
-                + "	'" + dataElement.code("Number of new deaths") + "' dataElement,\n"
-                + "	'" + categoryOptionCombo.code(column) + "' categoryOptionCombo,\n"
-                + "	TO_CHAR(c.reportdate, 'YYYYMM') \"period\",\n"
-                + "	COUNT(c.*) \"value\"\n"
-                + "FROM cases c\n"
-                + "LEFT JOIN person p ON c.person_id = p.id\n"
-                + "WHERE\n"
-                + "	c.disease = 'CORONAVIRUS'\n"
-                + "	AND date_part('year', c.reportdate) = :year\n"
-                + "	AND date_part('month', c.reportdate) = :month\n"
-                + "	AND c.outcome = 'DECEASED'\n"
-                + "	AND p.sex = '" + gender + "'\n"
-                + "	AND p.approximateage BETWEEN " + ageMin + " AND " + ageMax + "\n"
-                + "GROUP BY\n"
-                + "	c.healthfacility_id,\n"
-                + "	to_char(c.reportdate, 'YYYYMM')";
+            + "	c.healthfacility_id::VARCHAR orgUnit,\n"
+            + "	'" + dataElement.code("Number of new deaths") + "' dataElement,\n"
+            + "	'" + categoryOptionCombo.code(column) + "' categoryOptionCombo,\n"
+            + "	TO_CHAR(c.reportdate, 'YYYYMM') \"period\",\n"
+            + "	COUNT(c.*) \"value\"\n"
+            + "FROM cases c\n"
+            + "LEFT JOIN person p ON c.person_id = p.id\n"
+            + "WHERE\n"
+            + "	c.disease = 'CORONAVIRUS'\n"
+            + "	AND date_part('year', c.outcomedate) = :year\n"
+            + "	AND date_part('month', c.outcomedate) = :month\n"
+            + "	AND c.outcome = 'DECEASED'\n"
+            + "	AND p.sex = '" + gender + "'\n"
+            + "	AND p.approximateage BETWEEN " + ageMin + " AND " + ageMax + "\n"
+            + "GROUP BY\n"
+            + "	c.healthfacility_id,\n"
+            + "	to_char(c.reportdate, 'YYYYMM')";
     }
 
     static void report_b() {

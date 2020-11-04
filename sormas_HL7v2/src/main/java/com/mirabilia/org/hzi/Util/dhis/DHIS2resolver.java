@@ -66,8 +66,8 @@ public class DHIS2resolver {
             urlConnection.setDoOutput(true);
             urlConnection.setRequestMethod("GET");
             urlConnection.setUseCaches(true);
-            urlConnection.setConnectTimeout(2000);
-            urlConnection.setReadTimeout(2000);
+            //urlConnection.setConnectTimeout(2000);
+            //urlConnection.setReadTimeout(2000);
              urlConnection.setRequestProperty("Content-Type", "application/json");
             urlConnection.connect();
 

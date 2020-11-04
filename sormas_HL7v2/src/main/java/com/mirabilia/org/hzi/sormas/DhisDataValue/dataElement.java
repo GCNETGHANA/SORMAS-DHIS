@@ -52,8 +52,9 @@ public class dataElement {
         }
         
         _list = new ArrayList<dataElement>();
+        _list.add(new dataElement("Number of new deaths", "cw4v7izzo7L"));
+        
         _list.add(new dataElement("Number of new cases hospitalised", "TO8IanhHkHA"));
-        _list.add(new dataElement("Number of new deaths", "MV3otDWIPpz"));
         _list.add(new dataElement("Suspected cases by transmission classification\\t", "X75THcHgnjq"));
         _list.add(new dataElement("Number of cases tested", "MBVAaUTsYi6"));
         _list.add(new dataElement("Number of new cases treated", "tEeMGqyVCVx"));

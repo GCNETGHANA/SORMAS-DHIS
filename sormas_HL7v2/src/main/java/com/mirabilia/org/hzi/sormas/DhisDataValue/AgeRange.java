@@ -58,6 +58,8 @@ public class AgeRange {
         _list.add(new AgeRange("5-14 years", 5, 14));
         _list.add(new AgeRange("15-49 years", 15, 49));
         _list.add(new AgeRange("50-64 years", 50, 64));
+        _list.add(new AgeRange("65-79 years", 65, 79));
+        _list.add(new AgeRange("80+ years", 80, 1000));
 
         return _list;
     }

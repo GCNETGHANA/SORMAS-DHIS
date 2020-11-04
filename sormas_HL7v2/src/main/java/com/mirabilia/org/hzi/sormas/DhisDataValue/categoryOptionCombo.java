@@ -51,21 +51,23 @@ public class categoryOptionCombo {
         }
         
         _list = new ArrayList<categoryOptionCombo>();
-        _list.add(new categoryOptionCombo("15-49 years, Male", "ujcU9CRK17O"));
-        _list.add(new categoryOptionCombo("15-49 years, Female", "jYt2qZSSHWp"));
-        _list.add(new categoryOptionCombo("2-4 years, Male", "n9pdJamZz11"));
-        _list.add(new categoryOptionCombo("50-64 years, Female", "EWofZ3FULsh"));
-        _list.add(new categoryOptionCombo("5-14 years, Male", "XpRz5kz7KC0"));
-        _list.add(new categoryOptionCombo("0-1 years, Male", "qeDIPI8DGWH"));
-        _list.add(new categoryOptionCombo("5-14 years, Female", "XBlE4pXHRv5"));
-        _list.add(new categoryOptionCombo("0-1 years, Female", "G1vthcQ3koH"));
-        _list.add(new categoryOptionCombo("2-4 years, Female", "p3TXpPEK0oh"));
-        _list.add(new categoryOptionCombo("50-64 years, Male", "kdIGdK69Kko"));
-        _list.add(new categoryOptionCombo("Male, Female, Male, Female, Male, Female, Male, Female, Male, Female, Male, Female", "T8hRxKHspPL"));
-        _list.add(new categoryOptionCombo("Female, Female, Female, Female, Female, Female", "xW9RbGoEfPp"));
-        _list.add(new categoryOptionCombo("Male, Male, Male, Male, Male, Male", "Jun9KkSrwyq"));
+        _list.add(new categoryOptionCombo("0-1 years, Male", "DFarWJgBUzs"));
+        _list.add(new categoryOptionCombo("0-1 years, Female", "s9jIoEZfhis"));
+        _list.add(new categoryOptionCombo("2-4 years, Male", "u4qovKOiWp3"));
+        _list.add(new categoryOptionCombo("2-4 years, Female", "tjHJPYaKDw5"));
+        _list.add(new categoryOptionCombo("5-14 years, Male", "GPdx8dY2rUQ"));
+        _list.add(new categoryOptionCombo("5-14 years, Female", "wIJGxmWx77w"));
+        _list.add(new categoryOptionCombo("15-49 years, Male", "yHxBhsyra0s"));
+        _list.add(new categoryOptionCombo("15-49 years, Female", "j1rXiqATlZ0"));
+        _list.add(new categoryOptionCombo("50-64 years, Male", "n5xLnGJxdSY"));
+        _list.add(new categoryOptionCombo("50-64 years, Female", "Ys9vFeSqLTr"));
+        _list.add(new categoryOptionCombo("65-79 years, Male", "E19zZXrQicF"));
+        _list.add(new categoryOptionCombo("65-79 years, Female", "MCfMP9XnUFb"));
+        _list.add(new categoryOptionCombo("80+ years, Male", "Cizo3NsSYtl"));
+        _list.add(new categoryOptionCombo("80+ years, Female", "cYoRyk1HDXR"));
 
-        _list.add(new categoryOptionCombo("default", "HllvX50cXC0"));
+        _list.add(new categoryOptionCombo("default", "Joer6DI3Xaf"));
+
         _list.add(new categoryOptionCombo("Known Cluster", "BYFKGvQj8CE"));
         _list.add(new categoryOptionCombo("Mechanical ventilation", "iOkiG5qOpKi"));
         _list.add(new categoryOptionCombo("Admitted in intensive care unit (ICU)", "qJr1qHMKd9Q"));

@@ -61,7 +61,7 @@ public class orgUnitConn extends HttpServlet {
         if (initz == 1989) {
             JSONParser jsonParser = new JSONParser();
 
-            String base_url = urll + "/api/organisationUnits.json?fields=name&maxLevel=1";
+            String base_url = urll + "/api/organisationUnits.json?fields=name&maxLevel=5";
 
             String json_all = getDemAll(base_url);
 
@@ -111,7 +111,7 @@ public class orgUnitConn extends HttpServlet {
         if (initz == 5050) {
             JSONParser jsonParser = new JSONParser();
 
-            String base_url = urll + "/api/organisationUnits.json?fields=name&maxLevel=1";
+            String base_url = urll + "/api/organisationUnits.json?fields=name&maxLevel=5";
 
             String json_all = getDemAll(base_url);
 

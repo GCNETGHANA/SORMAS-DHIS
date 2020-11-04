@@ -60,7 +60,7 @@ public class orgUnit {
         Connection conn = DbConnector.getConnection();
         ResultSet rx;
         try {
-            PreparedStatement ps = conn.prepareStatement("SELECT CONVERT(uid, CHAR) id,externalid from sormas_local WHERE externalid <> '0'");
+            PreparedStatement ps = conn.prepareStatement("SELECT CONVERT(uid, CHAR) id, externalid from sormas_local WHERE externalid <> '0'");
             rx = ps.executeQuery();
             while (rx.next()) {
                 _list.add(new orgUnit(rx.getString("id"), rx.getString("externalid")));
