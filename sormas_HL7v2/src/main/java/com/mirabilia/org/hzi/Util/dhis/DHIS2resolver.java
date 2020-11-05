@@ -311,27 +311,29 @@ public class DHIS2resolver {
         String authStringEnc = new String(authEncBytes);
 
         try {
-
-         
-
             URL url = new URL(_api_base + pg_url);
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestProperty("Authorization", "Basic " + authStringEnc);
             urlConnection.setDoOutput(true);
             urlConnection.setRequestMethod("POST");
             urlConnection.setUseCaches(true);
-            urlConnection.setConnectTimeout(10000);
-            urlConnection.setReadTimeout(10000);
+            //urlConnection.setConnectTimeout(10000);
+            //urlConnection.setReadTimeout(10000);
             urlConnection.setRequestProperty("Content-Type", "application/json");
 
             urlConnection.connect();
 
+            String dataJson = ListToJson(data);
+            if (data != null && !dataKey.isEmpty())
+                dataJson = "{ \"" + dataKey + "\": " + dataJson + "}";
+
+            System.out.println("json of dhis report: \n" + dataJson);
+
             OutputStreamWriter out = new OutputStreamWriter(urlConnection.getOutputStream());
-            out.write(("{ \"" + dataKey + "\": " + ListToJson(data) + "}"));
+            out.write(dataJson);
             out.close();
 
-            int HttpResult = urlConnection.getResponseCode();
-           
+            int HttpResult = urlConnection.getResponseCode();         
 
             if (HttpResult == 200) {
                
@@ -354,27 +356,7 @@ public class DHIS2resolver {
 
         } catch (Exception ec) {
             System.err.println(ec);
-        } finally {
-            System.out.println("error occurred");
-            /**
-             * if (1==2){ try { String string = "2020-02-22 22:13:50.948";
-             * SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd
-             * HH:mm:ss.SSS"); java.sql.Timestamp datetime = new
-             * Timestamp(formatter.parse(string).getTime()); //
-             * System.out.println("DatedTime: " + datetime.toString());
-             *
-             * System.err.println("FIXED: Warning!"); } catch (ParseException
-             * ex) {
-             * Logger.getLogger(resolver.class.getName()).log(Level.SEVERE,
-             * null, ex); }
-             *
-             * }
-             *
-             */
         }
-        //  System.out.println(sb.toString());
-        return;
-
     }
 
     public static Map<String, Object> ObjectToMap(Object obj) {
@@ -426,8 +408,7 @@ public class DHIS2resolver {
             }
             postData.append(MapToJson(obj));
         }
-        System.out.println(postData.toString());
-        return "[" + postData.toString() + "]";
 
+        return "[" + postData.toString() + "]";
     }
 }
