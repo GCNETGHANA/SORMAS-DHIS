@@ -77,7 +77,11 @@ public class greport extends HttpServlet {
             queries.add(report_case_outcome());
             queries.add(report_case_classification());
 
-            String query = String.join("\nUNION\n", queries);
+            String query = 
+                  "WITH q AS (\n"
+                +   String.join("\nUNION\n", queries) + "\n"
+                + ")\n"
+                + "SELECT * FROM q WHERE dataElement IS NOT NULL AND categoryOptionCombo IS NOT NULL";
 
             // System.out.println("\n\n\n\n\n\n\n\nquery for report: \n" + query);
 
@@ -135,8 +139,7 @@ public class greport extends HttpServlet {
         }
 
         return 
-              "WITH q AS (\n"
-            + "SELECT\n"
+              "SELECT\n"
             + " COALESCE(f.externalid, '') orgUnit,\n"
             + "	TO_CHAR(COALESCE(c.outcomedate, c.changedate), 'YYYYMM') \"period\",\n"
             + " CASE"
@@ -160,9 +163,7 @@ public class greport extends HttpServlet {
             + " CASE"
             +       age_gender_when_clause + "\n"
             + " END,\n"
-            + "	c.outcome\n"
-            + ") \n"
-            + "SELECT * FROM q WHERE dataElement IS NOT NULL AND categoryOptionCombo IS NOT NULL"
+            + "	c.outcome"
             ;
     }
 
@@ -185,17 +186,16 @@ public class greport extends HttpServlet {
         }
 
         return 
-              "WITH q AS (\n"
-            + "SELECT\n"
+              "SELECT\n"
             + " COALESCE(f.externalid, '') orgUnit,\n"
-            + "	TO_CHAR(COALESCE(c.classificationdate, c.reportdate), 'YYYYMM') \"period\",\n"
+            + " TO_CHAR(COALESCE(c.classificationdate, c.reportdate), 'YYYYMM') \"period\",\n"
             + " CASE"
             +       age_gender_when_clause + "\n"
             + " END categoryOptionCombo,\n"
             + " CASE c.caseclassification"
             +       classifications_when_clause + "\n"
             + " END dataElement,\n"
-            + "	COUNT(c.*) \"value\"\n"
+            + " COUNT(c.*) \"value\"\n"
             + "FROM cases c\n"
             + "LEFT JOIN person p ON c.person_id = p.id\n"
             + "LEFT JOIN facility f ON c.healthfacility_id = f.id\n"
@@ -210,9 +210,7 @@ public class greport extends HttpServlet {
             + " CASE"
             +       age_gender_when_clause + "\n"
             + " END,\n"
-            + "	c.caseclassification\n"
-            + ") \n"
-            + "SELECT * FROM q WHERE dataElement IS NOT NULL AND categoryOptionCombo IS NOT NULL"
+            + "	c.caseclassification"
             ;
     }
 
