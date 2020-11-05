@@ -175,15 +175,18 @@
                                 <div class="card card-default">
                                     <div class="card-header">
                                         <h3 class="card-title">
-                                            <i class="fas fa-cogs"></i>
-                                            Controller Setup
+                                            <i class="fas fa-file"></i>
+                                            Report generator
                                         </h3>
                                     </div>
-                                    <div class="row">
-                                        <div class="col-lg-12">
-                                            <form class="col-lg-12" onsubmit="event.preventDefault();sendgenerate(event.target)">
-                                                <div class="row">
-                                                    <div class="input-group input-group col-3">
+                                    <div class="row d-flex flex-c justify-content-center align-items-center">
+                                        <div class="row w-100">
+                                            <div class="col-lg-4">
+                                                <form></form>
+                                            </div>
+                                            <form class="col-lg-4 d-flex flex-column justify-content-center align-items-center p-5" onsubmit="event.preventDefault();sendgenerate(event.target)">
+                                                <div class="w-100">
+                                                    <div class="form-group w-100">
                                                         <label>Select Year</label>
                                                         <br>
                                                         <select name="year" class="form-control js-select2" id="state_x" >
@@ -199,9 +202,9 @@
 
                                                         </select>
                                                     </div>
-                                                    <div class="col-3">
+                                                    <div class="form-group w-100">
                                                         <label>Select Month</label>
-                                                         <br>
+                                                        <br>
                                                         <select name="month" class="form-control js-select2" id="state_x" >
                                                             <option value="1" selected>January</option>
                                                             <option value="2" >February</option>
@@ -218,14 +221,14 @@
 
                                                         </select>
                                                     </div>
-                                                    <div class="col-3">
+                                                    <div class="w-100 d-flex flex-row justify-content-center">
                                                         <button type="submit" class="btn btn-success btn-flat">
                                                             Generate
                                                         </button>
 
-                                                       
+
                                                     </div>
-                                                   
+
                                                 </div>
                                             </form>
                                         </div>
@@ -273,17 +276,30 @@
 
 
             <script>
-                
-                function sendgenerate(e){
-                   $.ajax({
+
+                function sendgenerate(e) {
+                    Swal.fire({position: 'top-end', icon: 'success', title: 'Generating report', showConfirmButton: false, timer: 5000})
+                    $.ajax({
                         type: "POST",
                         url: '/greport',
                         data: $(e).serialize(),
-                        success: function(s){
-                            
+                        success: function (s) {
+
+                            var f = JSON.parse(s.responseData)
+
+                            if (f.status != "SUCCESS") {
+                                Swal.fire("Erro", "Please try again", "error");
+                                return;
+                            }
+
+                            Swal.fire(
+                                    `Report generated successfully `,
+                                    "",
+                                    `success`
+                                    )
                         }
-                       
-                      });
+
+                    });
                 }
                 function step(e) {
                     $("#" + e).addClass("disabledbutton");
@@ -318,7 +334,7 @@
 
 
 
-//maintenance
+                //maintenance
 
                 function checkerX() {
                     if ($("#instll").prop("checked") === true) {

@@ -25,6 +25,7 @@
  */
 package com.mirabilia.org.hzi.Util.dhis;
 
+import com.mirabilia.org.hzi.sormas.DhisDataValue.ServeResponse;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -296,7 +297,7 @@ public class DHIS2resolver {
         return sb.toString();
     }
 
-    public static void PostMethod(String pg_url, List data, String dataKey) {
+    public static ServeResponse PostMethod(String pg_url, List data, String dataKey) {
 
         String[] _url = ConffileCatcher.fileCatcher("passed");
         String _api_base = _url[10].toString();
@@ -344,9 +345,14 @@ public class DHIS2resolver {
                 }
                 System.out.println(sb.toString());
                 br.close();
+                return ServeResponse.Success( sb.toString(), "Report generated");
+//                return sb.toString();
 
             } else {
                 System.out.println("Error occured in posting request");
+                return ServeResponse.Error( "", "Error occured in posting request");
+                
+                
 
             }
 
@@ -357,6 +363,7 @@ public class DHIS2resolver {
         } catch (Exception ec) {
             System.err.println(ec);
         }
+       return ServeResponse.Error( "", "Error occured in posting request");
     }
 
     public static Map<String, Object> ObjectToMap(Object obj) {
