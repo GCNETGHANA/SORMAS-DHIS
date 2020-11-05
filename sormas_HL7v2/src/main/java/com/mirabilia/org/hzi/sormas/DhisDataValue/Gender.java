@@ -26,7 +26,7 @@
 package com.mirabilia.org.hzi.sormas.DhisDataValue;
 
 import com.mirabilia.org.hzi.sormas.*;
-import static com.mirabilia.org.hzi.sormas.DhisDataValue.dataElement._list;
+import static com.mirabilia.org.hzi.sormas.DhisDataValue.DataElement._list;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
@@ -53,7 +53,7 @@ public class Gender {
         }
         _list = new ArrayList<Gender>();
         _list.add(new Gender("Male", "MALE"));
-        _list.add(new Gender("Female", "MALE"));
+        _list.add(new Gender("Female", "FEMALE"));
 
         return _list;
     }

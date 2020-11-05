@@ -25,7 +25,6 @@
  */
 package com.mirabilia.org.hzi.sormas.DhisDataValue;
 
-import static com.mirabilia.org.hzi.sormas.DhisDataValue.categoryOptionCombo._list;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
@@ -34,42 +33,43 @@ import java.util.function.Predicate;
  *
  * @author augan
  */
-public class dataElement {
+public class DataElement {
 
     public String name;
     public String code;
 
-    public dataElement(String name, String code) {
+    public DataElement(String name, String code) {
         this.name = name;
         this.code = code;
     }
 
-    static List<dataElement> _list;
+    static List<DataElement> _list;
 
-    public static List<dataElement> list() {
+    public static List<DataElement> list() {
         if (_list != null) {
             return _list;
         }
         
-        _list = new ArrayList<dataElement>();
-        _list.add(new dataElement("Number of new deaths", "cw4v7izzo7L"));
+        _list = new ArrayList<DataElement>();
+        _list.add(new DataElement("Number of recovered cases", "pppW1UbL0JL"));
+        _list.add(new DataElement("Number of new deaths", "cw4v7izzo7L"));
         
-        _list.add(new dataElement("Number of new cases hospitalised", "TO8IanhHkHA"));
-        _list.add(new dataElement("Suspected cases by transmission classification\\t", "X75THcHgnjq"));
-        _list.add(new dataElement("Number of cases tested", "MBVAaUTsYi6"));
-        _list.add(new dataElement("Number of new cases treated", "tEeMGqyVCVx"));
-        _list.add(new dataElement("Number of recovered cases", "xa3lXAIiGM2"));
-        _list.add(new dataElement("Number of new suspected cases", "bgq6BpHz9BS"));
-        _list.add(new dataElement("Number of new confirmed cases", "NktJlhFFDhf"));
-        _list.add(new dataElement("Confirmed cases by transmission classification", "PbR7KDrmkUV"));
+        _list.add(new DataElement("Number of new suspected cases", "ouOn4KYL9JY"));
+        _list.add(new DataElement("Number of new confirmed cases", "MLWvGWMYfvl"));
+
+        _list.add(new DataElement("Number of new cases hospitalised", "TO8IanhHkHA"));
+        _list.add(new DataElement("Suspected cases by transmission classification\\t", "X75THcHgnjq"));
+        _list.add(new DataElement("Number of cases tested", "MBVAaUTsYi6"));
+        _list.add(new DataElement("Number of new cases treated", "tEeMGqyVCVx"));
+        _list.add(new DataElement("Confirmed cases by transmission classification", "PbR7KDrmkUV"));
 
         return _list;
     }
 
     public static String code(final String name) {
-        dataElement item = list().stream().filter(new Predicate<dataElement>() {
+        DataElement item = list().stream().filter(new Predicate<DataElement>() {
             @Override
-            public boolean test(dataElement n) {
+            public boolean test(DataElement n) {
                 return n.name.equals(name);
             }
         }).findFirst().orElse(null);

@@ -40,33 +40,33 @@ import java.util.logging.Logger;
  *
  * @author augan
  */
-public class orgUnit {
+public class OrganizationUnit {
 
     public String id;
     public String externalId;
 
-    public orgUnit(String id, String externalId) {
+    public OrganizationUnit(String id, String externalId) {
         this.id = id;
         this.externalId = externalId;
     }
 
-    static List<orgUnit> _list;
+    static List<OrganizationUnit> _list;
 
-    public static List<orgUnit> list() {
+    public static List<OrganizationUnit> list() {
         if (_list != null) {
             return _list;
         }
-        _list = new ArrayList<orgUnit>();
+        _list = new ArrayList<OrganizationUnit>();
         Connection conn = DbConnector.getConnection();
         ResultSet rx;
         try {
             PreparedStatement ps = conn.prepareStatement("SELECT CONVERT(uid, CHAR) id, externalid from sormas_local WHERE externalid <> '0'");
             rx = ps.executeQuery();
             while (rx.next()) {
-                _list.add(new orgUnit(rx.getString("id"), rx.getString("externalid")));
+                _list.add(new OrganizationUnit(rx.getString("id"), rx.getString("externalid")));
             }
         } catch (SQLException ex) {
-            Logger.getLogger(orgUnit.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(OrganizationUnit.class.getName()).log(Level.SEVERE, null, ex);
 
         }
        
@@ -74,9 +74,9 @@ public class orgUnit {
     }
 
     public static String externalid(final String id) {
-        orgUnit item = list().stream().filter(new Predicate<orgUnit>() {
+        OrganizationUnit item = list().stream().filter(new Predicate<OrganizationUnit>() {
             @Override
-            public boolean test(orgUnit n) {
+            public boolean test(OrganizationUnit n) {
                 return n.id.equals(id);
             }
         }).findFirst().orElse(null);
