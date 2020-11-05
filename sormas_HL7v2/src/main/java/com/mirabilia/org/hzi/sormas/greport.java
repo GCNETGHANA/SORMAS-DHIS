@@ -29,32 +29,25 @@ import com.mirabilia.org.hzi.sormas.DhisDataValue.NamedParameterStatement;
 import com.mirabilia.org.hzi.sormas.DhisDataValue.DhimsDataValue;
 import com.mirabilia.org.hzi.Util.dhis.DHIS2resolver;
 import com.mirabilia.org.hzi.sormas.DhisDataValue.AgeRange;
+import com.mirabilia.org.hzi.sormas.DhisDataValue.CaseReportByClassification;
+import com.mirabilia.org.hzi.sormas.DhisDataValue.CaseReportByOutcome;
 import com.mirabilia.org.hzi.sormas.DhisDataValue.Gender;
-import com.mirabilia.org.hzi.sormas.DhisDataValue.categoryOptionCombo;
-import com.mirabilia.org.hzi.sormas.DhisDataValue.dataElement;
-import com.mirabilia.org.hzi.sormas.DhisDataValue.orgUnit;
+import com.mirabilia.org.hzi.sormas.DhisDataValue.CategoryOptionCombo;
 import com.mirabilia.org.hzi.sormas.doa.DbConnector;
-import static com.mirabilia.org.hzi.sormas.getterSetters.Localizer_Deleter;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import static java.lang.System.out;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -78,24 +71,17 @@ public class greport extends HttpServlet {
         try {
             Class.forName("org.postgresql.Driver");
             Connection conn = DbConnector.getPgConnection();
-            String str = "";
             ResultSet rx;
 
-            List<AgeRange> ages = AgeRange.list();
+            List<String> queries = new ArrayList<String>();
+            queries.add(report_case_outcome());
+            queries.add(report_case_classification());
 
-            List<Gender> genders = Gender.list();
+            String query = String.join("\nUNION\n", queries);
 
-            StringBuilder stmt = new StringBuilder();
-            for (AgeRange age : ages) {
-                for (Gender gender : genders) {
-                    if (stmt.length() > 0) {
-                        stmt.append("\nUNION");
-                    }
-                    stmt.append("\n" + report_deaths(age.name + ", " + gender.name, gender.code, age.min, age.max));
-                }
-            }
+            // System.out.println("\n\n\n\n\n\n\n\nquery for report: \n" + query);
 
-            NamedParameterStatement ps = new NamedParameterStatement(conn, stmt.toString());
+            NamedParameterStatement ps = new NamedParameterStatement(conn, query);
             ps.setInt("year", year);
             ps.setInt("month", month);
 
@@ -104,23 +90,22 @@ public class greport extends HttpServlet {
             List<DhimsDataValue> dhimsList = new ArrayList<DhimsDataValue>();
             while (rx.next()) {
                 DhimsDataValue dh = new DhimsDataValue(rx.getString("dataElement"), rx.getString("categoryOptionCombo"), rx.getString("period"), rx.getString("orgUnit"), rx.getString("value"));
-                String _u = dh.orgUnit;
-                dh.orgUnit = orgUnit.externalid(dh.orgUnit);
-                System.out.println("hahahah: " + _u + ": " + dh.orgUnit);
                 dhimsList.add(dh);
             }
+
+            System.out.println("all orgUnits for report: " + dhimsList.size());
             
             List<DhimsDataValue> dhimsList2 = new ArrayList<DhimsDataValue>();
             for (DhimsDataValue d : dhimsList) {
                 if (d.orgUnit.length() > 0)
                     dhimsList2.add(d);
             }
-            dhimsList = dhimsList2.subList(0, 1);
+            dhimsList = dhimsList2;
             dhimsList2 = null;
 
-            System.out.println("log2: " + dhimsList.size());
+            System.out.println("valid orgUnits for report: " + dhimsList.size());
             
-            // DHIS2resolver.PostMethod("/api/dataValueSets", dhimsList, "dataValues");
+            DHIS2resolver.PostMethod("/api/dataValueSets", dhimsList, "dataValues");
 
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(greport.class.getName()).log(Level.SEVERE, null, ex);
@@ -129,47 +114,106 @@ public class greport extends HttpServlet {
         } catch(Exception ef){
             System.err.println(ef);
         }
-
     }
 
-    static String report_deaths(String column, String gender, int ageMin, int ageMax) {
-        return "SELECT\n"
-            + "	c.healthfacility_id::VARCHAR orgUnit,\n"
-            + "	'" + dataElement.code("Number of new deaths") + "' dataElement,\n"
-            + "	'" + categoryOptionCombo.code(column) + "' categoryOptionCombo,\n"
-            + "	TO_CHAR(c.reportdate, 'YYYYMM') \"period\",\n"
+    static String report_case_outcome () {
+
+        String outcomes_when_clause = "";
+        for (CaseReportByOutcome n : CaseReportByOutcome.list()) {
+            outcomes_when_clause += "\nWHEN '" + n.code + "' THEN '" + n.dataElement() + "'";
+        }
+
+        String age_gender_when_clause = "";
+        for (AgeRange age : AgeRange.list()) {
+            for (Gender gender : Gender.list()) {
+                age_gender_when_clause += 
+                    "\nWHEN p.sex = '" + gender.code + "'"
+                    + " AND p.approximateage BETWEEN " + age.min + " AND " + age.max 
+                    + " THEN " 
+                    + "'" + CategoryOptionCombo.code(age.name + ", " + gender.name) + "'";
+            }
+        }
+
+        return 
+              "WITH q AS (\n"
+            + "SELECT\n"
+            + " COALESCE(f.externalid, '') orgUnit,\n"
+            + "	TO_CHAR(COALESCE(c.outcomedate, c.changedate), 'YYYYMM') \"period\",\n"
+            + " CASE"
+            +       age_gender_when_clause + "\n"
+            + " END categoryOptionCombo,\n"
+            + " CASE c.outcome"
+            +       outcomes_when_clause + "\n"
+            + " END dataElement,\n"
             + "	COUNT(c.*) \"value\"\n"
             + "FROM cases c\n"
             + "LEFT JOIN person p ON c.person_id = p.id\n"
+            + "LEFT JOIN facility f ON c.healthfacility_id = f.id\n"
             + "WHERE\n"
-            + "	c.disease = 'CORONAVIRUS'\n"
-            + "	AND date_part('year', c.outcomedate) = :year\n"
-            + "	AND date_part('month', c.outcomedate) = :month\n"
-            + "	AND c.outcome = 'DECEASED'\n"
-            + "	AND p.sex = '" + gender + "'\n"
-            + "	AND p.approximateage BETWEEN " + ageMin + " AND " + ageMax + "\n"
+            + " c.deleted <> true\n"
+            + "	AND date_part('year', COALESCE(c.outcomedate, c.changedate)) = :year\n"
+            + "	AND date_part('month', COALESCE(c.outcomedate, c.changedate)) = :month\n"
+            + "	AND c.disease = 'CORONAVIRUS'\n"
             + "GROUP BY\n"
-            + "	c.healthfacility_id,\n"
-            + "	to_char(c.reportdate, 'YYYYMM')";
+            + "	f.externalid,\n"
+            + "	to_char(COALESCE(c.outcomedate, c.changedate), 'YYYYMM'),\n"
+            + " CASE"
+            +       age_gender_when_clause + "\n"
+            + " END,\n"
+            + "	c.outcome\n"
+            + ") \n"
+            + "SELECT * FROM q WHERE dataElement IS NOT NULL AND categoryOptionCombo IS NOT NULL"
+            ;
     }
 
-    static void report_b() {
-        String stmt = "SELECT\n"
-                + "	c.healthfacility_id::VARCHAR orgUnit,\n"
-                + "	'Number of cases tested' dataElement,\n"
-                + "	'default' categoryOptionCombo,\n"
-                + "	to_char(c.reportdate, 'YYYYMM') \"period\",\n"
-                + "	count(c.*) \"value\"\n"
-                + "from cases c\n"
-                + "Where\n"
-                + "	c.disease = 'CORONAVIRUS'\n"
-                + "	AND date_part('year', c.reportdate) = 2020\n"
-                + "	AND date_part('month', c.reportdate) = 8\n"
-                + "	AND c.outcome = 'DECEASED'\n"
-                + "GROUP BY\n"
-                + "	c.healthfacility_id,\n"
-                + "	to_char(c.reportdate, 'YYYYMM')\n"
-                + "LIMIT 1";
+    static String report_case_classification () {
+
+        String classifications_when_clause = "";
+        for (CaseReportByClassification n : CaseReportByClassification.list()) {
+            classifications_when_clause += "\nWHEN '" + n.code + "' THEN '" + n.dataElement() + "'";
+        }
+
+        String age_gender_when_clause = "";
+        for (AgeRange age : AgeRange.list()) {
+            for (Gender gender : Gender.list()) {
+                age_gender_when_clause += 
+                    "\nWHEN p.sex = '" + gender.code + "'"
+                    + " AND p.approximateage BETWEEN " + age.min + " AND " + age.max 
+                    + " THEN " 
+                    + "'" + CategoryOptionCombo.code(age.name + ", " + gender.name) + "'";
+            }
+        }
+
+        return 
+              "WITH q AS (\n"
+            + "SELECT\n"
+            + " COALESCE(f.externalid, '') orgUnit,\n"
+            + "	TO_CHAR(COALESCE(c.classificationdate, c.reportdate), 'YYYYMM') \"period\",\n"
+            + " CASE"
+            +       age_gender_when_clause + "\n"
+            + " END categoryOptionCombo,\n"
+            + " CASE c.caseclassification"
+            +       classifications_when_clause + "\n"
+            + " END dataElement,\n"
+            + "	COUNT(c.*) \"value\"\n"
+            + "FROM cases c\n"
+            + "LEFT JOIN person p ON c.person_id = p.id\n"
+            + "LEFT JOIN facility f ON c.healthfacility_id = f.id\n"
+            + "WHERE\n"
+            + " c.deleted <> true\n"
+            + "	AND date_part('year', COALESCE(c.classificationdate, c.reportdate)) = :year\n"
+            + "	AND date_part('month', COALESCE(c.classificationdate, c.reportdate)) = :month\n"
+            + "	AND c.disease = 'CORONAVIRUS'\n"
+            + "GROUP BY\n"
+            + "	f.externalid,\n"
+            + "	to_char(COALESCE(c.classificationdate, c.reportdate), 'YYYYMM'),\n"
+            + " CASE"
+            +       age_gender_when_clause + "\n"
+            + " END,\n"
+            + "	c.caseclassification\n"
+            + ") \n"
+            + "SELECT * FROM q WHERE dataElement IS NOT NULL AND categoryOptionCombo IS NOT NULL"
+            ;
     }
 
     public static Map<String, String> getBody(HttpServletRequest request) throws IOException {
