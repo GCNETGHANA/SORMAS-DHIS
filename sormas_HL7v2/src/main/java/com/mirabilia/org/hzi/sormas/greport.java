@@ -132,7 +132,7 @@ public class greport extends HttpServlet {
             for (Gender gender : Gender.list()) {
                 age_gender_when_clause += 
                     "\nWHEN p.sex = '" + gender.code + "'"
-                    + " AND p.approximateage BETWEEN " + age.min + " AND " + age.max 
+                    + " AND get_person_age(p.id, COALESCE(c.outcomedate, c.changedate)) BETWEEN " + age.min + " AND " + age.max 
                     + " THEN " 
                     + "'" + CategoryOptionCombo.code(age.name + ", " + gender.name) + "'";
             }
@@ -179,7 +179,7 @@ public class greport extends HttpServlet {
             for (Gender gender : Gender.list()) {
                 age_gender_when_clause += 
                     "\nWHEN p.sex = '" + gender.code + "'"
-                    + " AND p.approximateage BETWEEN " + age.min + " AND " + age.max 
+                    + " AND get_person_age(p.id, COALESCE(c.classificationdate, c.reportdate)) BETWEEN " + age.min + " AND " + age.max 
                     + " THEN " 
                     + "'" + CategoryOptionCombo.code(age.name + ", " + gender.name) + "'";
             }
