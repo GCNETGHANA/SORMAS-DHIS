@@ -146,6 +146,47 @@
                         transform: translate(-50%,-50%);
                         -ms-transform: translate(-50%,-50%);
                     }
+
+
+                </style>
+                <style>
+                    .lds-facebook {
+                        display: inline-block;
+                        position: relative;
+                        width: 80px;
+                        height: 80px;
+                    }
+                    .lds-facebook div {
+                        display: inline-block;
+                        position: absolute;
+                        left: 8px;
+                        width: 16px;
+                        background: #000;
+                        animation: lds-facebook 1.2s cubic-bezier(0, 0.5, 0.5, 1) infinite;
+                    }
+                    .lds-facebook div:nth-child(1) {
+                        left: 8px;
+                        animation-delay: -0.24s;
+                    }
+                    .lds-facebook div:nth-child(2) {
+                        left: 32px;
+                        animation-delay: -0.12s;
+                    }
+                    .lds-facebook div:nth-child(3) {
+                        left: 56px;
+                        animation-delay: 0;
+                    }
+                    @keyframes lds-facebook {
+                        0% {
+                            top: 8px;
+                            height: 64px;
+                        }
+                        50%, 100% {
+                            top: 24px;
+                            height: 32px;
+                        }
+                    }
+
                 </style>
                 <!-- Content Wrapper. Contains page content -->
                 <div class="content-wrapper">
@@ -222,6 +263,9 @@
                                                         </select>
                                                     </div>
                                                     <div class="w-100 d-flex flex-row justify-content-center">
+                                                        <div style="display:none;" id="lds-facebook"><div></div><div></div><div></div></div>
+                                                    </div>
+                                                    <div class="w-100 d-flex flex-row justify-content-center">
                                                         <button type="submit" class="btn btn-success btn-flat">
                                                             Generate
                                                         </button>
@@ -278,19 +322,20 @@
             <script>
 
                 function sendgenerate(e) {
-                    Swal.fire({position: 'top-end', icon: 'success', title: 'Generating report', showConfirmButton: false, timer: 5000})
+                    $('#lds-facebook').show();
                     $.ajax({
                         type: "POST",
                         url: '/greport',
                         data: $(e).serialize(),
                         success: function (s) {
-
+                            $('#lds-facebook').hide();
                             var f = JSON.parse(s.responseData)
 
                             if (f.status != "SUCCESS") {
                                 Swal.fire("Erro", "Please try again", "error");
                                 return;
                             }
+
 
                             Swal.fire(
                                     `Report generated successfully `,
