@@ -161,7 +161,7 @@
                         position: absolute;
                         left: 8px;
                         width: 16px;
-                        background: #000;
+                        background: #28a745;
                         animation: lds-facebook 1.2s cubic-bezier(0, 0.5, 0.5, 1) infinite;
                     }
                     .lds-facebook div:nth-child(1) {
@@ -263,10 +263,10 @@
                                                         </select>
                                                     </div>
                                                     <div class="w-100 d-flex flex-row justify-content-center">
-                                                        <div style="display:none;" id="lds-facebook"><div></div><div></div><div></div></div>
+                                                        <div style="display:none;" class="lds-facebook"><div></div><div></div><div></div></div>
                                                     </div>
                                                     <div class="w-100 d-flex flex-row justify-content-center">
-                                                        <button type="submit" class="btn btn-success btn-flat">
+                                                        <button id="generateBtn" type="submit" class="btn btn-success btn-flat">
                                                             Generate
                                                         </button>
 
@@ -322,14 +322,17 @@
             <script>
 
                 function sendgenerate(e) {
-                    $('#lds-facebook').show();
+                    $('.lds-facebook').show();
+                    $('#generateBtn').prop('disabled', true);
                     $.ajax({
                         type: "POST",
                         url: '/greport',
                         data: $(e).serialize(),
                         success: function (s) {
-                            $('#lds-facebook').hide();
+                            $('.lds-facebook').hide();
+                            $('#generateBtn').prop('disabled', false);
                             var f = JSON.parse(s.responseData)
+                            console.log(f);
 
                             if (f.status != "SUCCESS") {
                                 Swal.fire("Erro", "Please try again", "error");
