@@ -25,6 +25,7 @@
  */
 package com.mirabilia.org.hzi.sormas;
 
+import com.google.gson.Gson;
 import com.mirabilia.org.hzi.sormas.DhisDataValue.NamedParameterStatement;
 import com.mirabilia.org.hzi.sormas.DhisDataValue.DhimsDataValue;
 import com.mirabilia.org.hzi.Util.dhis.DHIS2resolver;
@@ -33,11 +34,13 @@ import com.mirabilia.org.hzi.sormas.DhisDataValue.CaseReportByClassification;
 import com.mirabilia.org.hzi.sormas.DhisDataValue.CaseReportByOutcome;
 import com.mirabilia.org.hzi.sormas.DhisDataValue.Gender;
 import com.mirabilia.org.hzi.sormas.DhisDataValue.CategoryOptionCombo;
+import com.mirabilia.org.hzi.sormas.DhisDataValue.ServeResponse;
 import com.mirabilia.org.hzi.sormas.doa.DbConnector;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -59,6 +62,8 @@ import javax.servlet.http.HttpServletResponse;
  */
 @WebServlet(name = "greport", urlPatterns = {"/greport"})
 public class greport extends HttpServlet {
+
+    private Gson gson = new Gson();
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -109,7 +114,13 @@ public class greport extends HttpServlet {
 
             System.out.println("valid orgUnits for report: " + dhimsList.size());
             
-            DHIS2resolver.PostMethod("/api/dataValueSets", dhimsList, "dataValues");
+            ServeResponse resp = DHIS2resolver.PostMethod("/api/dataValueSets", dhimsList, "dataValues");
+            String resString = this.gson.toJson(resp);
+            PrintWriter out = response.getWriter();
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            out.print(resString);
+            out.flush();
 
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(greport.class.getName()).log(Level.SEVERE, null, ex);

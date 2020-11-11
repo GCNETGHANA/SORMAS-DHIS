@@ -72,7 +72,7 @@
                                     </li-->
                                     <li class="nav-item">
                                         <a href="greport.jsp" class="nav-link">
-                                            <i class="fas fa-cogs nav-icon"></i>
+                                            <i class="fas fa-file nav-icon"></i>
                                             <p style="font-size:12px">Generate Report</p>
                                         </a>
                                     </li>
