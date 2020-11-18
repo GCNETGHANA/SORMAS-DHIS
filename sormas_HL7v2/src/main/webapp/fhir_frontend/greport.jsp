@@ -186,6 +186,22 @@
                             height: 32px;
                         }
                     }
+                    
+                    #tableData, #tableData tbody {
+                        width: 100%;
+                    }
+                    
+                    #tableData td{
+                        text-align: center;
+                    }
+                    
+                    #tableData th {
+                        text-align: center;
+                    }
+                    
+                    #tableData tr{
+                    border: solid 1px black;
+                    }
 
                 </style>
                 <!-- Content Wrapper. Contains page content -->
@@ -333,18 +349,27 @@
                             $('#generateBtn').prop('disabled', false);
                             var f = JSON.parse(s.responseData)
                             console.log(f);
+                            var impCount = f.importCount;
+                            var deleted = impCount.deleted;
+                            var ignored = impCount.ignored;
+                            var imported = impCount.imported;
+                            var updated = impCount.updated;
+                               
+
 
                             if (f.status != "SUCCESS") {
-                                Swal.fire("Erro", "Please try again", "error");
+                                Swal.fire("Error", "Please try again", "error");
                                 return;
                             }
 
 
                             Swal.fire(
-                                    `Report generated successfully `,
-                                    "",
-                                    `success`
-                                    )
+                                    {
+                                        title: "Report generated successfully",
+                                        icon: "success",
+                                        html: "<table id='tableData'><thead><tr><th>Data</th><th>Value</th></tr></thead><tbody><tr><td>Imported</td><td>"+imported+"</td></tr><tr><td>Updated</td><td>"+updated+"</td></tr><tr><td>Ignored</td><td>"+ignored+"</td></tr><tr><td>Deleted</td><td>"+deleted+"</td></tr></tbody></table>"
+                                    }
+                            )
                         }
 
                     });
