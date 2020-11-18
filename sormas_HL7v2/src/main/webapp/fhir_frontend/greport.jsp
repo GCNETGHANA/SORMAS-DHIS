@@ -236,13 +236,22 @@
                                             Report generator
                                         </h3>
                                     </div>
-                                    <div class="row d-flex flex-c justify-content-center align-items-center">
+                                    <div class="row d-flex flex-column justify-content-center align-items-center">
                                         <div class="row w-100">
                                             <div class="col-lg-4">
                                                 <form></form>
                                             </div>
                                             <form class="col-lg-4 d-flex flex-column justify-content-center align-items-center p-5" onsubmit="event.preventDefault();sendgenerate(event.target)">
                                                 <div class="w-100">
+                                                    <div class="form-group w-100">
+                                                        <label>Select Report</label>
+                                                        <br>
+                                                        <select name="year" class="form-control js-select2" >
+                                                            <option selected>Monthly COVID-19 report</option>
+                                                            
+
+                                                        </select>
+                                                    </div>
                                                     <div class="form-group w-100">
                                                         <label>Select Year</label>
                                                         <br>
@@ -283,7 +292,7 @@
                                                     </div>
                                                     <div class="w-100 d-flex flex-row justify-content-center">
                                                         <button id="generateBtn" type="submit" class="btn btn-success btn-flat">
-                                                            Generate
+                                                            Generate & Send to DHIMS
                                                         </button>
 
 
@@ -365,9 +374,10 @@
 
                             Swal.fire(
                                     {
-                                        title: "Report generated successfully",
+                                        title: "Report generated & sent successfully",
                                         icon: "success",
-                                        html: "<table id='tableData'><thead><tr><th>Data</th><th>Value</th></tr></thead><tbody><tr><td>Imported</td><td>"+imported+"</td></tr><tr><td>Updated</td><td>"+updated+"</td></tr><tr><td>Ignored</td><td>"+ignored+"</td></tr><tr><td>Deleted</td><td>"+deleted+"</td></tr></tbody></table>"
+                                        html:"<div class='w-100 d-flex flex-row justify-content-around'><div class='d-flex flex-column'><h1><strong>"+imported+"</strong></h1><div class='d-flex w-100 flex-row justify-content-around '><i  class='fas fa-file text-success mr-1'></i><h2>Inserted</h2></div></div> <div class='d-flex flex-column'><h1>"+updated+"</h1><div class='d-flex flex-row w-100 justify-content-around '><i  class='fas fa-edit text-primary mr-1'></i><h2>Updated</h2></div></div> <div class='d-flex flex-column'><h1><strong>"+deleted+"</strong></h1><div class='d-flex w-100 flex-row justify-content-around '><i  class='fas fa-trash text-danger mr-1'></i><h2>Removed</h2></div></div> <div class='d-flex flex-column'><h1><strong>"+ignored+"</strong></h1><div class='d-flex w-100 flex-row justify-content-around'><i  class='fas fa-exclamation text-warning mr-1'></i><h2>Ignored</h2></div></div></div>"
+//                                        html: "<table id='tableData'><thead><tr><th>Data</th><th>Value</th></tr></thead><tbody><tr><td>Imported</td><td>"+imported+"</td></tr><tr><td>Updated</td><td>"+updated+"</td></tr><tr><td>Ignored</td><td>"+ignored+"</td></tr><tr><td>Deleted</td><td>"+deleted+"</td></tr></tbody></table>"
                                     }
                             )
                         }
