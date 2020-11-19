@@ -81,13 +81,14 @@ public class greport extends HttpServlet {
             List<String> queries = new ArrayList<String>();
             queries.add(report_case_outcome());
             queries.add(report_case_classification());
+            queries.add(report_case_hospitalised());
 
             String query = 
                   "WITH q AS (\n"
                 +   String.join("\nUNION\n", queries) + "\n"
                 + ")\n"
                 + "SELECT * FROM q WHERE dataElement IS NOT NULL AND categoryOptionCombo IS NOT NULL";
-
+              System.out.println(query);
             // System.out.println("\n\n\n\n\n\n\n\nquery for report: \n" + query);
 
             NamedParameterStatement ps = new NamedParameterStatement(conn, query);
@@ -224,6 +225,57 @@ public class greport extends HttpServlet {
             + "	c.caseclassification"
             ;
     }
+    
+    
+    static String report_case_hospitalised () {
+
+        String classifications_when_clause = "";
+        for (CaseReportByClassification n : CaseReportByClassification.list()) {
+            classifications_when_clause += "\nWHEN '" + n.code + "' THEN '" + n.dataElement() + "'";
+        }
+
+        String age_gender_when_clause = "";
+        for (AgeRange age : AgeRange.list()) {
+            for (Gender gender : Gender.list()) {
+                age_gender_when_clause += 
+                    "\nWHEN p.sex = '" + gender.code + "'"
+                    + " AND get_person_age(p.id, COALESCE(c.classificationdate, c.reportdate)) BETWEEN " + age.min + " AND " + age.max 
+                    + " THEN " 
+                    + "'" + CategoryOptionCombo.code(age.name + ", " + gender.name) + "'";
+            }
+        }
+
+        return 
+              "SELECT\n"
+            + " COALESCE(f.externalid, '') orgUnit,\n"
+            + " TO_CHAR(COALESCE(c.classificationdate, c.reportdate), 'YYYYMM') \"period\",\n"
+            + " CASE"
+            +       age_gender_when_clause + "\n"
+            + " END categoryOptionCombo,\n"
+            + " CASE c.caseclassification \n"
+            + "WHEN 'CONFIRMED' THEN 'K9nmTxAOmZx' \n"
+            + " END dataElement,\n"
+            + " COUNT(c.*) \"value\"\n"
+            + "FROM cases c\n"
+            + "LEFT JOIN person p ON c.person_id = p.id\n"
+            + "LEFT JOIN facility f ON c.healthfacility_id = f.id\n"
+            + "LEFT JOIN hospitalization h ON c.hospitalization_id  = h.id\n"
+            + "WHERE\n"
+            + " h.admissiondate IS NOT NULL \n"
+            + "	AND date_part('year', COALESCE(h.admissiondate)) = :year\n"
+            + "	AND date_part('month', COALESCE(h.admissiondate)) = :month\n"
+            + "	AND c.disease = 'CORONAVIRUS'\n"
+            + "GROUP BY\n"
+            + "	f.externalid,\n"
+            + "	to_char(COALESCE(c.classificationdate, c.reportdate), 'YYYYMM'),\n"
+            + " CASE"
+            +       age_gender_when_clause + "\n"
+            + " END,\n"
+            + "	c.caseclassification"
+            ;
+    }
+    
+    
 
     public static Map<String, String> getBody(HttpServletRequest request) throws IOException {
 
