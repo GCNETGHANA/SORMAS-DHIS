@@ -25,6 +25,7 @@
  */
 package com.mirabilia.org.hzi.sormas;
 
+import static com.mirabilia.org.hzi.sormas.greport.getBody;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -81,8 +82,8 @@ public class orgsunit extends HttpServlet {
             throws ServletException, IOException {
         Map<String, String> payloadRequest = getBody(request);
          String region  = payloadRequest.get("region");
-         String district = payloadRequest.get("district");
-         System.out.println(region);
+//       String district = payloadRequest.get("district");
+         System.out.println("got here");
         response.setContentType("application/json");
          PrintWriter out = response.getWriter();
             response.setCharacterEncoding("UTF-8");
@@ -114,44 +115,5 @@ public class orgsunit extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
-     public static Map<String, String> getBody(HttpServletRequest request) throws IOException {
-
-        String body = null;
-        StringBuilder stringBuilder = new StringBuilder();
-        BufferedReader bufferedReader = null;
-
-        try {
-            InputStream inputStream = request.getInputStream();
-            if (inputStream != null) {
-                bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-                char[] charBuffer = new char[128];
-                int bytesRead = -1;
-                while ((bytesRead = bufferedReader.read(charBuffer)) > 0) {
-                    stringBuilder.append(charBuffer, 0, bytesRead);
-                }
-            } else {
-                stringBuilder.append("");
-            }
-        } catch (IOException ex) {
-            throw ex;
-        } finally {
-            if (bufferedReader != null) {
-                try {
-                    bufferedReader.close();
-                } catch (IOException ex) {
-                    throw ex;
-                }
-            }
-        }
-
-        body = stringBuilder.toString();
-        String[] bodyArray = body.split("&");
-        Map<String, String> sMap = new HashMap<String, String>();
-        for (int v = 0; v < bodyArray.length; v++) {
-            String[] kv = bodyArray[v].split("=");
-            sMap.put(kv[0], kv[1]);
-        }
-        return sMap;
-    }
-
+    
 }
