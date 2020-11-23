@@ -14,6 +14,7 @@
 
         <!-- OPTIONAL SCRIPTS -->
         <script src="./mira_assets/js/demo.js"></script>
+         <script src="./mira_assets/js/select2.js"></script>
 
         <!-- PAGE PLUGINS -->
         <!-- jQuery Mapael -->

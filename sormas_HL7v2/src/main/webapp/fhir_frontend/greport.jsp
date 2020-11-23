@@ -238,10 +238,30 @@
                                     </div>
                                     <div class="row d-flex flex-column justify-content-center align-items-center">
                                         <div class="row w-100">
-                                            <div class="col-lg-4">
-                                                <form></form>
+                                            <div class="col-lg-6 d-flex flex-column justify-content-center align-items-center p-5">
+                                                <form class="w-100 d-flex flex-column justify-content-center align-items-center p-5">
+                                                    <div class="form-group w-100">
+                                                        <label>Select Region</label>
+                                                        <br/>
+                                                        <select name="region" class="form-control regionSelect" >
+                                                          </select>
+                                                    </div>
+                                                    <div class="form-group w-100">
+                                                        <label>Select District</label>
+                                                        <br/>
+                                                        <select name="region" class="form-control js-select2" >
+                                                          </select>
+                                                    </div>
+                                                    <div class="form-group w-100">
+                                                        <label>Select Facility</label>
+                                                        <br/>
+                                                        <select name="region" class="form-control js-select2" >
+                                                          </select>
+                                                    </div>
+                                                    
+                                                </form>
                                             </div>
-                                            <form class="col-lg-4 d-flex flex-column justify-content-center align-items-center p-5" onsubmit="event.preventDefault();sendgenerate(event.target)">
+                                            <form class="col-lg-6 d-flex flex-column justify-content-center align-items-center p-5" onsubmit="event.preventDefault();sendgenerate(event.target)">
                                                 <div class="w-100">
                                                     <div class="form-group w-100">
                                                         <label>Select Report</label>
@@ -345,6 +365,17 @@
 
 
             <script>
+                
+                $.ajax({
+                    type: "GET",
+                    url: "/orgsunit",
+                    data: {
+                        region: "yes"
+                    },
+                    success: function(f){
+                        console.log(f);
+                    }
+                })
 
                 function sendgenerate(e) {
                     $('.lds-facebook').show();
