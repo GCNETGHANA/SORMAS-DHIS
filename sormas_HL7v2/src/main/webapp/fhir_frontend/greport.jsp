@@ -238,8 +238,9 @@
                                     </div>
                                     <div class="row d-flex flex-column justify-content-center align-items-center">
                                         <div class="row w-100">
-                                            <div class="col-lg-6 d-flex flex-column justify-content-center align-items-center p-5">
-                                                <form class="w-100 d-flex flex-column justify-content-center align-items-center p-5">
+                                            <div class="col-lg-2"></div>
+                                            <div class="col-lg-4 d-flex flex-column  align-items-center p-5">
+                                                <form class="w-100 d-flex flex-column align-items-center">
                                                     <div class="form-group w-100">
                                                         <label>Select Region</label>
                                                         <br/>
@@ -261,7 +262,7 @@
                                                     
                                                 </form>
                                             </div>
-                                            <form class="col-lg-6 d-flex flex-column justify-content-center align-items-center p-5" onsubmit="event.preventDefault();sendgenerate(event.target)">
+                                            <form class="col-lg-4 d-flex flex-column  align-items-center p-5" onsubmit="event.preventDefault();sendgenerate(event.target)">
                                                 <div class="w-100">
                                                     <div class="form-group w-100">
                                                         <label>Select Report</label>
