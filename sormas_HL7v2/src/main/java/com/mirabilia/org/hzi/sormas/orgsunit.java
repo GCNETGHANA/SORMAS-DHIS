@@ -1,119 +1,117 @@
-/*
- * Copyright (c) 2020, Augustus otu
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- * * Redistributions of source code must retain the above copyright notice, this
- *   list of conditions and the following disclaimer.
- * * Redistributions in binary form must reproduce the above copyright notice,
- *   this list of conditions and the following disclaimer in the documentation
- *   and/or other materials provided with the distribution.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- */
 package com.mirabilia.org.hzi.sormas;
 
-import static com.mirabilia.org.hzi.sormas.greport.getBody;
-import java.io.BufferedReader;
+import com.mirabilia.org.hzi.sormas.doa.DbConnector;
+import static com.mirabilia.org.hzi.sormas.getterSetters.Localizer_Deleter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import static java.lang.System.out;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import com.google.gson.Gson;
 
 /**
  *
- * @author Augustus otu
+ * @author Mathew Official
  */
 @WebServlet(name = "orgsunit", urlPatterns = {"/orgsunit"})
 public class orgsunit extends HttpServlet {
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-         Map<String, String> payloadRequest = getBody(request);
-         String region  = payloadRequest.get("region");
-         String district = payloadRequest.get("district");
-         System.out.println(region);
-        response.setContentType("application/json");
-         PrintWriter out = response.getWriter();
-            response.setCharacterEncoding("UTF-8");
-            out.print("{[]}");
-            out.flush();
-    }
+    private Gson gson = new Gson();
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        Map<String, String> payloadRequest = getBody(request);
-         String region  = payloadRequest.get("region");
-//       String district = payloadRequest.get("district");
-         System.out.println("got here");
-        response.setContentType("application/json");
-         PrintWriter out = response.getWriter();
-            response.setCharacterEncoding("UTF-8");
-            out.print("{[]}");
-            out.flush();
+        try {
+            String tkbck = "";
+
+            PreparedStatement ps;
+            ResultSet rx;
+
+            PreparedStatement ps1;
+            ResultSet rx1;
+
+            PreparedStatement ps2;
+            ResultSet rx2;
+
+            PreparedStatement ps3;
+            ResultSet rx3;
+
+            Class.forName("org.postgresql.Driver");
+            Connection conn = DbConnector.getPgConnection();
+            String str = "";
+            System.out.println(request.getParameter("region"));
+            System.out.println("here");
+            List<String> rests = new ArrayList<>();
+            //loop through sormas local and get infrastructure data by level into mysql local db for futher use by the adapter.
+            try {
+                if (request.getParameter("region") != null && "yes".equals(request.getParameter("region"))) {
+
+                    ps = conn.prepareStatement("SELECT name as region FROM region;");
+                    rx = ps.executeQuery();
+                    while (rx.next()) {
+                        rests.add(rx.getString(1));
+                    }
+                }
+                if (request.getParameter("regionSelected") != null) {
+                    String region = request.getParameter("regionSelected");
+                    System.out.println(region);
+                    ps = conn.prepareStatement("SELECT d.name as districts from district d left join region r on r.id = d.region_id where r.name = ?");
+                    ps.setString(1, region);
+                    rx = ps.executeQuery();
+                    while (rx.next()) {
+                        rests.add(rx.getString(1));
+                    }
+                }
+
+                if (request.getParameter("districtSelected") != null) {
+                    String district = request.getParameter("districtSelected");
+                    System.out.println(district);
+                    ps = conn.prepareStatement("SELECT d.name as facilities from facility d left join district r on r.id = d.district_id where r.name = ?");
+                    ps.setString(1, district);
+                    rx = ps.executeQuery();
+                    while (rx.next()) {
+                        rests.add(rx.getString(1));
+                    }
+                }
+
+                conn.close();
+                String resString = this.gson.toJson(rests);
+                PrintWriter out = response.getWriter();
+                response.setContentType("application/json");
+                response.setCharacterEncoding("UTF-8");
+                out.print(resString);
+                out.flush();
+
+            } catch (SQLException ex) {
+                out.print("SQLException: " + ex.getMessage());
+                out.print("SQLState: " + ex.getSQLState());
+                out.print("VendorError: " + ex.getErrorCode());
+            }
+
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(localizerz.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
     }
 
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+
     }
 
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
-    
 }
