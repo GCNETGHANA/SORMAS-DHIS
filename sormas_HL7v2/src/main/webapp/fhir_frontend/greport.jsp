@@ -241,11 +241,11 @@
                                         </h3>
                                     </div>
                                     <div class="row d-flex flex-column justify-content-center align-items-center">
-                                        <div class="row w-100">
+                                        <form onsubmit="event.preventDefault();sendgenerate(event.target)" class="row w-100">
                                             <div class="col-lg-2"></div>
 
 
-                                            <form class="col-lg-4 d-flex flex-column  align-items-center p-5" onsubmit="event.preventDefault();sendgenerate(event.target)">
+                                            <div class="col-lg-4 d-flex flex-column  align-items-center p-5" >
                                                 <div class="w-100">
                                                     <div class="form-group w-100">
                                                         <label>Select Report</label>
@@ -303,10 +303,10 @@
                                                     </div>
 
                                                 </div>
-                                            </form>
+                                            </div>
 
                                             <div class="col-lg-4 d-flex flex-column  align-items-center p-5">
-                                                <form class="w-100 d-flex flex-column align-items-center">
+                                                <div class="w-100 d-flex flex-column align-items-center">
                                                     <div class="form-group w-100 jsS">
                                                         <label>Select Region</label>
                                                         <br/>
@@ -326,10 +326,11 @@
                                                         </select>
                                                     </div>
 
-                                                </form>
+                                                </div>
                                             </div>
-                                        </div>
+                                        </form>
                                     </div>
+                                </div>
                             </section> 
 
                         </div>             
@@ -428,7 +429,7 @@
                 }
 
                 function fillDistricts(data) {
-                    $(".districtSelect").select2()
+                    $(".districtSelect").empty()
                     $(".districtSelect").select2({
                         data: data,
                         placeholder: "Select a district",
@@ -463,7 +464,7 @@
                 
                 
                 function fillFacilities(data){
-                    $(".facilitySelect").select2()
+                    $(".facilitySelect").empty()
                      $(".facilitySelect").select2({
                         data: data,
                         placeholder: "Select a facility"
