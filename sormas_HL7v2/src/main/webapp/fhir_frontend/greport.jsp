@@ -186,21 +186,25 @@
                             height: 32px;
                         }
                     }
-                    
+
                     #tableData, #tableData tbody {
                         width: 100%;
                     }
-                    
+
                     #tableData td{
                         text-align: center;
                     }
-                    
+
                     #tableData th {
                         text-align: center;
                     }
-                    
+
                     #tableData tr{
-                    border: solid 1px black;
+                        border: solid 1px black;
+                    }
+
+                    .jsS span{
+                        display: none;
                     }
 
                 </style>
@@ -239,8 +243,8 @@
                                     <div class="row d-flex flex-column justify-content-center align-items-center">
                                         <div class="row w-100">
                                             <div class="col-lg-2"></div>
-                                           
-                                        
+
+
                                             <form class="col-lg-4 d-flex flex-column  align-items-center p-5" onsubmit="event.preventDefault();sendgenerate(event.target)">
                                                 <div class="w-100">
                                                     <div class="form-group w-100">
@@ -248,7 +252,7 @@
                                                         <br>
                                                         <select name="year" class="form-control js-select2" >
                                                             <option selected>Monthly COVID-19 report</option>
-                                                            
+
 
                                                         </select>
                                                     </div>
@@ -300,28 +304,28 @@
 
                                                 </div>
                                             </form>
-                                            
-                                             <div class="col-lg-4 d-flex flex-column  align-items-center p-5">
+
+                                            <div class="col-lg-4 d-flex flex-column  align-items-center p-5">
                                                 <form class="w-100 d-flex flex-column align-items-center">
-                                                    <div class="form-group w-100">
+                                                    <div class="form-group w-100 jsS">
                                                         <label>Select Region</label>
                                                         <br/>
                                                         <select name="region" class="form-control regionSelect" >
-                                                          </select>
+                                                        </select>
                                                     </div>
-                                                    <div class="form-group w-100">
+                                                    <div class="form-group w-100 jsS">
                                                         <label>Select District</label>
                                                         <br/>
-                                                        <select name="region" class="form-control js-select2" >
-                                                          </select>
+                                                        <select name="district" class="form-control districtSelect" >
+                                                        </select>
                                                     </div>
-                                                    <div class="form-group w-100">
+                                                    <div class="form-group w-100 jsS">
                                                         <label>Select Facility</label>
                                                         <br/>
-                                                        <select name="region" class="form-control js-select2" >
-                                                          </select>
+                                                        <select name="facility" class="form-control facilitySelect" >
+                                                        </select>
                                                     </div>
-                                                    
+
                                                 </form>
                                             </div>
                                         </div>
@@ -369,17 +373,103 @@
 
 
             <script>
+
+                try {
+                    $.ajax({
+                        type: "GET",
+                        url: "/orgsunit",
+                        data: {
+                            region: "yes"
+                        },
+                        success: function (f) {
+                            var cs = f.map((t, ind) => {
+                                return {
+                                    id: ind,
+                                    text: t
+                                }
+                            })
+                            console.log(cs);
+                            fillRegions(cs);
+                        }
+                    })
+                } catch (e) {
+                    console.error(e)
+                }
+
+                function fillRegions(data) {
+                    $(".regionSelect").select2({
+                        data: data,
+                        placeholder: "Select an option",
+                        templateSelection: fetchDistricts
+                    })
+                }
+
+                function fetchDistricts(state) {
+                    if (!state.id) {
+                        return state.text;
+                    }
+                    var region = state.text;
+                    $.ajax({
+                        type: "GET",
+                        url: "/orgsunit",
+                        data: {
+                            regionSelected: region
+                        },
+                        success: function (d) {
+                            var cs = d.map((t, ind) => {
+                                return {
+                                    id: ind,
+                                    text: t
+                                }
+                            })
+                            fillDistricts(cs);
+                        }
+                    })
+                }
+
+                function fillDistricts(data) {
+                    $(".districtSelect").select2()
+                    $(".districtSelect").select2({
+                        data: data,
+                        placeholder: "Select a district",
+                        templateSelection: fetchFacilities
+                    })
+                }
                 
-//                $.ajax({
-//                    type: "GET",
-//                    url: "/orgsunit",
-//                    data: {
-//                        region: "yes"
-//                    },
-//                    success: function(f){
-//                        console.log(f);
-//                    }
-//                })
+                function fetchFacilities(state){
+                       if (!state.id) {
+                        return state.text;
+                    }
+                    var district = state.text;
+                    $.ajax({
+                        type: "GET",
+                        url: "/orgsunit",
+                        data: {
+                            districtSelected: district
+                        },
+                        success: function (d) {
+                            var cs = d.map((t, ind) => {
+                                return {
+                                    id: ind,
+                                    text: t
+                                }
+                            })
+                            fillFacilities(cs);
+                            
+                        }
+                    })
+                    
+                }
+                
+                
+                function fillFacilities(data){
+                    $(".facilitySelect").select2()
+                     $(".facilitySelect").select2({
+                        data: data,
+                        placeholder: "Select a facility"
+
+                    })
+                }
 
                 function sendgenerate(e) {
                     $('.lds-facebook').show();
@@ -398,7 +488,7 @@
                             var ignored = impCount.ignored;
                             var imported = impCount.imported;
                             var updated = impCount.updated;
-                               
+
 
 
                             if (f.status != "SUCCESS") {
@@ -411,7 +501,7 @@
                                     {
                                         title: "Report generated & sent successfully",
                                         icon: "success",
-                                        html:"<div class='w-100 d-flex flex-row justify-content-around'><div class='d-flex flex-column'><h1><strong>"+imported+"</strong></h1><div class='d-flex w-100 flex-row justify-content-around '><i  class='fas fa-file text-success mr-1'></i><h2>Imported</h2></div></div> <div class='d-flex flex-column'><h1>"+updated+"</h1><div class='d-flex flex-row w-100 justify-content-around '><i  class='fas fa-edit text-primary mr-1'></i><h2>Updated</h2></div></div> <div class='d-flex flex-column'><h1><strong>"+ignored+"</strong></h1><div class='d-flex w-100 flex-row justify-content-around'><i  class='fas fa-exclamation text-warning mr-1'></i><h2>Ignored</h2></div></div> <div class='d-flex flex-column'><h1><strong>"+deleted+"</strong></h1><div class='d-flex w-100 flex-row justify-content-around '><i  class='fas fa-trash text-danger mr-1'></i><h2>Deleted</h2></div></div> </div>"
+                                        html: "<div class='w-100 d-flex flex-row justify-content-around'><div class='d-flex flex-column'><h1><strong>" + imported + "</strong></h1><div class='d-flex w-100 flex-row justify-content-around '><i  class='fas fa-file text-success mr-1'></i><h2>Imported</h2></div></div> <div class='d-flex flex-column'><h1>" + updated + "</h1><div class='d-flex flex-row w-100 justify-content-around '><i  class='fas fa-edit text-primary mr-1'></i><h2>Updated</h2></div></div> <div class='d-flex flex-column'><h1><strong>" + ignored + "</strong></h1><div class='d-flex w-100 flex-row justify-content-around'><i  class='fas fa-exclamation text-warning mr-1'></i><h2>Ignored</h2></div></div> <div class='d-flex flex-column'><h1><strong>" + deleted + "</strong></h1><div class='d-flex w-100 flex-row justify-content-around '><i  class='fas fa-trash text-danger mr-1'></i><h2>Deleted</h2></div></div> </div>"
 //                                        html: "<table id='tableData'><thead><tr><th>Data</th><th>Value</th></tr></thead><tbody><tr><td>Imported</td><td>"+imported+"</td></tr><tr><td>Updated</td><td>"+updated+"</td></tr><tr><td>Ignored</td><td>"+ignored+"</td></tr><tr><td>Deleted</td><td>"+deleted+"</td></tr></tbody></table>"
                                     }
                             )
