@@ -294,6 +294,10 @@
                                                     <div class="w-100 d-flex flex-row justify-content-center">
                                                         <div style="display:none;" class="lds-facebook"><div></div><div></div><div></div></div>
                                                     </div>
+                                                    <div class="w-100 d-flex flex-row justify-content-center align-items-center mb-3">
+                                                        <label class="mr-2" for="countrySelector">Generate report for entire country</label>
+                                                        <input type="checkbox" style="height:1.4rem;width:1.4rem;"  id="countrySelector" onchange="countrySelect(this.value)" class="form-control"/>
+                                                    </div>
                                                     <div class="w-100 d-flex flex-row justify-content-center">
                                                         <button id="generateBtn" type="submit" class="btn btn-success btn-flat">
                                                             Generate & Send to DHIMS
@@ -374,9 +378,17 @@
 
 
             <script>
-
-                try {
-                    $.ajax({
+                function countrySelect(val){
+                    if($("#countrySelector").is(':checked')){
+                        $(".regionSelect").empty();
+                        $(".districtSelect").empty();
+                        $(".facilitySelect").empty();
+                    }else{
+                        getRegions();
+                    }
+                }
+                function getRegions(){
+                      $.ajax({
                         type: "GET",
                         url: "/orgsunit",
                         data: {
@@ -393,6 +405,9 @@
                             fillRegions(cs);
                         }
                     })
+                }
+                try {
+                  getRegions();
                 } catch (e) {
                     console.error(e)
                 }
