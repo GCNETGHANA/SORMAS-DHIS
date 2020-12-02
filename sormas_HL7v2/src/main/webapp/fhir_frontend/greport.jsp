@@ -421,7 +421,7 @@
                 }
 
                 function fetchDistricts(state) {
-                    if (!state.id) {
+                    if (!state.id || state.text == "Selct an option") {
                         return state.text;
                     }
                     var region = state.text;
@@ -446,14 +446,14 @@
                 function fillDistricts(data) {
                     $(".districtSelect").empty()
                     $(".districtSelect").select2({
-                        data: data,
+                        data: ["Select a district",...data],
                         placeholder: "Select a district",
                         templateSelection: fetchFacilities
                     })
                 }
                 
                 function fetchFacilities(state){
-                       if (!state.id) {
+                       if (!state.id || state.text == "Select a district") {
                         return state.text;
                     }
                     var district = state.text;
@@ -481,7 +481,7 @@
                 function fillFacilities(data){
                     $(".facilitySelect").empty()
                      $(".facilitySelect").select2({
-                        data: data,
+                        data: ["Select a facility",...data],
                         placeholder: "Select a facility"
 
                     })
