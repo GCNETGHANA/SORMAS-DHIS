@@ -294,10 +294,7 @@
                                                     <div class="w-100 d-flex flex-row justify-content-center">
                                                         <div style="display:none;" class="lds-facebook"><div></div><div></div><div></div></div>
                                                     </div>
-                                                    <div class="w-100 d-flex flex-row justify-content-center align-items-center mb-3">
-                                                        <label class="mr-2" for="countrySelector">Generate report for entire country</label>
-                                                        <input type="checkbox" style="height:1.4rem;width:1.4rem;"  id="countrySelector" onchange="countrySelect(this.value)" class="form-control"/>
-                                                    </div>
+                                                    
                                                     <div class="w-100 d-flex flex-row justify-content-center">
                                                         <button id="generateBtn" type="submit" class="btn btn-success btn-flat">
                                                             Generate & Send to DHIMS
@@ -401,8 +398,8 @@
                                     text: t
                                 }
                             })
-                            console.log(cs);
-                            fillRegions(cs);
+                           
+                            fillRegions(transformResponse(cs));
                         }
                     })
                 }
@@ -411,20 +408,26 @@
                 } catch (e) {
                     console.error(e)
                 }
+                
+                function transformResponse(data){
+                    return data.map(p=>({text: p.text.name, id: p.text.id}));
+                }
 
                 function fillRegions(data) {
                     $(".regionSelect").select2({
-                        data: data,
+                        data: [{text: "Select a region", id:0},...data],
                         placeholder: "Select an option",
+                        allowClear: true,
                         templateSelection: fetchDistricts
                     })
                 }
 
                 function fetchDistricts(state) {
-                    if (!state.id || state.text == "Selct an option") {
+                    if (!state.id || state.text == "Select a region") {
+                        $(".districtSelect").empty()
                         return state.text;
                     }
-                    var region = state.text;
+                    var region = state.id;
                     $.ajax({
                         type: "GET",
                         url: "/orgsunit",
@@ -438,7 +441,7 @@
                                     text: t
                                 }
                             })
-                            fillDistricts(cs);
+                            fillDistricts(transformResponse(cs));
                         }
                     })
                 }
@@ -446,17 +449,19 @@
                 function fillDistricts(data) {
                     $(".districtSelect").empty()
                     $(".districtSelect").select2({
-                        data: ["Select a district",...data],
+                        data: [{text: "Select a district", id:0},...data],
                         placeholder: "Select a district",
+                        allowClear: true,
                         templateSelection: fetchFacilities
                     })
                 }
                 
                 function fetchFacilities(state){
                        if (!state.id || state.text == "Select a district") {
+                         $(".facilitySelect").empty()
                         return state.text;
                     }
-                    var district = state.text;
+                    var district = state.id;
                     $.ajax({
                         type: "GET",
                         url: "/orgsunit",
@@ -470,7 +475,7 @@
                                     text: t
                                 }
                             })
-                            fillFacilities(cs);
+                            fillFacilities(transformResponse(cs));
                             
                         }
                     })
@@ -481,13 +486,29 @@
                 function fillFacilities(data){
                     $(".facilitySelect").empty()
                      $(".facilitySelect").select2({
-                        data: ["Select a facility",...data],
+                        data: [{text: "Select a facility", id:0},...data],
+                        allowClear: true,
                         placeholder: "Select a facility"
 
                     })
                 }
 
                 function sendgenerate(e) {
+//                    let region = $(".regionSelect option:selected").text() == "Select a region" || $(".regionSelect option:selected").text() == ""?"none":$(".regionSelect option:selected").text();
+//                    let district  = $(".districtSelect option:selected").text() == "Select a district" || $(".districtSelect option:selected").text() == ""?"none":$(".districtSelect option:selected").text();
+//                    let facility = $(".facilitySelect option:selected").text() == "Select a facility" || $(".facilitySelect option:selected").text() == ""?"none":$(".facilitySelect option:selected").text();
+//                    let finaldata = $(e).serializeArray();
+//                    finaldata.find(v=>v.name == "region").value=region;
+//                    finaldata.find(v=>v.name == "district").value=district;
+//                    finaldata.find(v=>v.name == "facility").value=facility;
+//                    let finaldataF = (ar)=>{
+//                        let str = "";
+//                        ar.map((v, ind)=>{
+//                            str += v.name+"="+v.value;
+//                            str+= ind !== ar.length-1?'&':'';
+//                        })
+//                        return str;
+//                    }
                     $('.lds-facebook').show();
                     $('#generateBtn').prop('disabled', true);
                     $.ajax({

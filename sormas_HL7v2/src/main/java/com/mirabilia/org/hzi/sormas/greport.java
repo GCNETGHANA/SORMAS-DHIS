@@ -68,10 +68,27 @@ public class greport extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
+        int district = 0, region  = 0;
+        String facility = "";
         Map<String, String> payloadRequest = getBody(request);
         int year = Integer.parseInt(payloadRequest.get("year"));
         int month = Integer.parseInt(payloadRequest.get("month"));
+        if(Integer.parseInt(payloadRequest.get("region")) == 0){
+      
+        }else if(Integer.parseInt(payloadRequest.get("district")) == 0){
+            region = Integer.parseInt(payloadRequest.get("region"));
+         
+        }else if(String.valueOf(payloadRequest.get("facility")) == "0"){
+            region = Integer.parseInt(payloadRequest.get("region"));
+             district  = Integer.parseInt(payloadRequest.get("district"));
+        } else{
+         region = Integer.parseInt(payloadRequest.get("region"));
+         district  = Integer.parseInt(payloadRequest.get("district"));
+         facility = payloadRequest.get("facility");
+        }
+        
+        
+        System.out.println(region+district+facility);
 
         try {
             Class.forName("org.postgresql.Driver");
@@ -79,14 +96,16 @@ public class greport extends HttpServlet {
             ResultSet rx;
 
             List<String> queries = new ArrayList<String>();
-            queries.add(report_case_outcome());
-            queries.add(report_case_classification());
-            queries.add(report_case_hospitalised());
-            queries.add(report_case_tested());
-            queries.add(lab_results());
-            queries.add(cases_in_icu());
-            queries.add(cases_by_treatment());
-             queries.add(cases_by_origin());
+            String where = getWhereClauses(region, district, facility);
+            System.out.println(where);
+            queries.add(report_case_outcome(where));
+            queries.add(report_case_classification(where));
+            queries.add(report_case_hospitalised(where));
+            queries.add(report_case_tested(where));
+            queries.add(lab_results(where));
+            queries.add(cases_in_icu(where));
+            queries.add(cases_by_treatment(where));
+             queries.add(cases_by_origin(where));
 
             String query
                     = "WITH q AS (\n"
@@ -137,13 +156,29 @@ public class greport extends HttpServlet {
             System.err.println(ef);
         }
     }
+    
+    
+    static String getWhereClauses(int region, int district, String facility){
+        System.out.println(region+","+ district+","+ facility +","+ facility.getClass().getSimpleName());
+            if(!"0".equals(facility) && !"".equals(facility)){
+                return "f.externalId = '"+facility+"' AND ";
+            }else if(district != 0){
+                return "f.district_id ="+district+" AND ";
+            }else if(region != 0){
+                return "f.region_id = "+region+" AND ";
+            }else {
+                return "";
+            }
+    }
 
-    static String report_case_outcome() {
-
+    static String report_case_outcome(String where) {
+        
         String outcomes_when_clause = "";
         for (CaseReportByOutcome n : CaseReportByOutcome.list()) {
             outcomes_when_clause += "\nWHEN '" + n.code + "' THEN '" + n.dataElement() + "'";
         }
+        
+       
 
         String age_gender_when_clause = "";
         for (AgeRange age : AgeRange.list()) {
@@ -170,6 +205,7 @@ public class greport extends HttpServlet {
                 + "LEFT JOIN person p ON c.person_id = p.id\n"
                 + "LEFT JOIN facility f ON c.healthfacility_id = f.id\n"
                 + "WHERE\n"
+                + where 
                 + " c.deleted <> true\n"
                 + "	AND date_part('year', COALESCE(c.outcomedate, c.changedate)) = :year\n"
                 + "	AND date_part('month', COALESCE(c.outcomedate, c.changedate)) = :month\n"
@@ -183,7 +219,7 @@ public class greport extends HttpServlet {
                 + "	c.outcome";
     }
 
-    static String report_case_classification() {
+    static String report_case_classification(String where) {
 
         String classifications_when_clause = "";
         for (CaseReportByClassification n : CaseReportByClassification.list()) {
@@ -215,6 +251,7 @@ public class greport extends HttpServlet {
                 + "LEFT JOIN person p ON c.person_id = p.id\n"
                 + "LEFT JOIN facility f ON c.healthfacility_id = f.id\n"
                 + "WHERE\n"
+                + where 
                 + " c.deleted <> true\n"
                 + "	AND date_part('year', COALESCE(c.classificationdate, c.reportdate)) = :year\n"
                 + "	AND date_part('month', COALESCE(c.classificationdate, c.reportdate)) = :month\n"
@@ -228,7 +265,7 @@ public class greport extends HttpServlet {
                 + "	c.caseclassification";
     }
 
-    static String report_case_hospitalised() {
+    static String report_case_hospitalised(String where) {
 
         String classifications_when_clause = "";
         for (CaseReportByClassification n : CaseReportByClassification.list()) {
@@ -261,6 +298,7 @@ public class greport extends HttpServlet {
                 + "LEFT JOIN facility f ON c.healthfacility_id = f.id\n"
                 + "LEFT JOIN hospitalization h ON c.hospitalization_id  = h.id\n"
                 + "WHERE\n"
+                + where 
                 + " h.admissiondate IS NOT NULL \n"
                 + "	AND date_part('year', COALESCE(h.admissiondate)) = :year\n"
                 + "	AND date_part('month', COALESCE(h.admissiondate)) = :month\n"
@@ -274,7 +312,7 @@ public class greport extends HttpServlet {
                 + "	c.caseclassification";
     }
 
-    static String report_case_tested() {
+    static String report_case_tested(String where) {
 
         String classifications_when_clause = "";
         for (CaseReportByClassification n : CaseReportByClassification.list()) {
@@ -323,6 +361,7 @@ public class greport extends HttpServlet {
                 + "LEFT JOIN pathogentest h ON s.id = h.sample_id\n"
                 + "\n"
                 + "WHERE\n"
+                + where 
                 + "\n"
                 + "h.testresult IS NOT NULL \n"
                 + "\n"
@@ -348,7 +387,7 @@ public class greport extends HttpServlet {
     }
 
     
-    static String lab_results(){
+    static String lab_results(String where){
         return " SELECT\n" +
 "      COALESCE (f.externalid, '') orgUnit,\n" +
 "      TO_CHAR( COALESCE ( C.classificationdate, C.reportdate ), 'YYYYMM' ) \"period\",\n" +
@@ -384,7 +423,7 @@ public class greport extends HttpServlet {
 "      LEFT JOIN\n" +
 "         pathogentest h \n" +
 "         ON s.ID = h.sample_id \n" +
-"   WHERE\n" +
+"   WHERE\n" + where  +
 "      h.testresult = 'PENDING' \n" +
 "      AND date_part( 'year', COALESCE (h.creationdate) ) = :year \n" +
 "      AND date_part( 'month', COALESCE (h.creationdate) ) = :month \n" +
@@ -392,7 +431,13 @@ public class greport extends HttpServlet {
 "   GROUP BY\n" +
 "      f.externalid, to_char( COALESCE ( C.classificationdate, C.reportdate ), 'YYYYMM' ), h.testresult ";
     }
-    static String cases_in_icu(){
+    
+    
+    
+    
+    
+    
+    static String cases_in_icu(String where){
         return "SELECT COALESCE\n" +
 "	( f.externalid, '' ) orgUnit,\n" +
 "	TO_CHAR( COALESCE ( h.intensivecareunitstart, h.admissiondate ), 'YYYYMM' ) \"period\",\n" +
@@ -412,7 +457,7 @@ public class greport extends HttpServlet {
 "	C LEFT JOIN person P ON C.person_id = P.\n" +
 "	ID LEFT JOIN facility f ON C.healthfacility_id = f.\n" +
 "	ID LEFT JOIN hospitalization h ON C.hospitalization_id = h.ID \n" +
-"WHERE\n" +
+"WHERE\n" + where +
 "	date_part( 'year', COALESCE ( h.intensivecareunitstart, h.admissiondate ) ) = :year \n" +
 "	AND date_part( 'month', COALESCE ( h.intensivecareunitstart, h.admissiondate ) ) = :month \n" +
 "	AND C.disease = 'CORONAVIRUS' \n" +
@@ -423,7 +468,7 @@ public class greport extends HttpServlet {
     }
     
     
-    static String cases_by_treatment(){
+    static String cases_by_treatment(String where){
         return "SELECT COALESCE\n" +
 "	( f.externalid, '' ) orgUnit,\n" +
 "	TO_CHAR( COALESCE ( T.treatmentdatetime ), 'YYYYMM' ) \"period\",\n" +
@@ -445,7 +490,7 @@ public class greport extends HttpServlet {
 "	C LEFT JOIN person P ON C.person_id = P.\n" +
 "	ID LEFT JOIN facility f ON C.healthfacility_id = f.\n" +
 "	ID LEFT JOIN treatment T ON T.therapy_id = C.therapy_id \n" +
-"WHERE\n" +
+"WHERE\n" + where +
 "	date_part( 'year', COALESCE ( T.treatmentdatetime ) ) = :year \n" +
 "	AND date_part( 'month', COALESCE ( T.treatmentdatetime ) ) = :month \n" +
 "	AND C.disease = 'CORONAVIRUS' \n" +
@@ -455,7 +500,7 @@ public class greport extends HttpServlet {
 "	T.treatmenttype";
     }
     
-    static String cases_by_origin(){
+    static String cases_by_origin(String where){
         return "SELECT COALESCE\n" +
 "	( f.externalid, '' ) orgUnit,\n" +
 "	TO_CHAR( COALESCE ( C.creationdate ), 'YYYYMM' ) \"period\",\n" +
@@ -484,7 +529,7 @@ public class greport extends HttpServlet {
 "	cases\n" +
 "	C LEFT JOIN person P ON C.person_id = P.\n" +
 "	ID LEFT JOIN facility f ON C.healthfacility_id = f.ID \n" +
-"WHERE\n" +
+"WHERE\n" + where +
 "	date_part( 'year', COALESCE ( C.creationdate ) ) = :year \n" +
 "	AND date_part( 'month', COALESCE ( C.creationdate ) ) = :month \n" +
 "	AND C.disease = 'CORONAVIRUS' \n" +
