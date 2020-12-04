@@ -68,7 +68,7 @@ public class greport extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        int district = 0, region  = 0;
+        int district = 0, region  = 0, subDistrict = 0;
         String facility = "";
         Map<String, String> payloadRequest = getBody(request);
         int year = Integer.parseInt(payloadRequest.get("year"));
@@ -78,13 +78,19 @@ public class greport extends HttpServlet {
         }else if(Integer.parseInt(payloadRequest.get("district")) == 0){
             region = Integer.parseInt(payloadRequest.get("region"));
          
+        }else if(Integer.parseInt(payloadRequest.get("subDistrict")) == 0){
+            region = Integer.parseInt(payloadRequest.get("region"));
+            district  = Integer.parseInt(payloadRequest.get("district"));
+         
         }else if(String.valueOf(payloadRequest.get("facility")) == "0"){
             region = Integer.parseInt(payloadRequest.get("region"));
              district  = Integer.parseInt(payloadRequest.get("district"));
+             subDistrict = Integer.parseInt(payloadRequest.get("subDistrict"));
         } else{
          region = Integer.parseInt(payloadRequest.get("region"));
          district  = Integer.parseInt(payloadRequest.get("district"));
          facility = payloadRequest.get("facility");
+         subDistrict = Integer.parseInt(payloadRequest.get("subDistrict"));
         }
         
         
@@ -96,8 +102,8 @@ public class greport extends HttpServlet {
             ResultSet rx;
 
             List<String> queries = new ArrayList<String>();
-            String where = getWhereClauses(region, district, facility);
-            System.out.println(where);
+            String where = getWhereClauses(region, district, facility, subDistrict);
+          
             queries.add(report_case_outcome(where));
             queries.add(report_case_classification(where));
             queries.add(report_case_hospitalised(where));
@@ -158,10 +164,11 @@ public class greport extends HttpServlet {
     }
     
     
-    static String getWhereClauses(int region, int district, String facility){
-        System.out.println(region+","+ district+","+ facility +","+ facility.getClass().getSimpleName());
+    static String getWhereClauses(int region, int district, String facility, int subDistrict){
             if(!"0".equals(facility) && !"".equals(facility)){
                 return "f.externalId = '"+facility+"' AND ";
+            }else if(subDistrict != 0){
+                return "f.community_id ="+subDistrict+" AND ";
             }else if(district != 0){
                 return "f.district_id ="+district+" AND ";
             }else if(region != 0){

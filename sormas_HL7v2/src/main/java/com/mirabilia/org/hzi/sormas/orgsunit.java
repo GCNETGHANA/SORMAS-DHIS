@@ -56,8 +56,7 @@ public class orgsunit extends HttpServlet {
             Connection conn = DbConnector.getPgConnection();
             String str = "";
             String resString;
-            
-           
+
             List<RegionData> rests = new ArrayList<>();
             List<FacilityData> FacRests = new ArrayList<>();
             //loop through sormas local and get infrastructure data by level into mysql local db for futher use by the adapter.
@@ -72,17 +71,31 @@ public class orgsunit extends HttpServlet {
                     }
                 }
                 if (request.getParameter("districtSelected") != null) {
-                    long district = Integer.parseInt(request.getParameter("districtSelected"));
-                  
-                    ps = conn.prepareStatement("SELECT d.name as facilityName , d.externalid as facilityId FROM facility d where d.externalid is not null AND d.district_id = ?");
-                    ps.setLong(1, district);
+                    int district = Integer.parseInt(request.getParameter("districtSelected"));
+                
+                    ps = conn.prepareStatement("SELECT name, id FROM community where district_id  = ?");
+                    ps.setInt(1, district);
                     rx = ps.executeQuery();
                     while (rx.next()) {
-                       
+
+                        RegionData rD = new RegionData(rx.getString(1), rx.getInt(2));
+                        rests.add(rD);
+                    }
+                }
+
+                if (request.getParameter("subDistrictSelected") != null) {
+                    int district = Integer.parseInt(request.getParameter("subDistrictSelected"));
+
+                    ps = conn.prepareStatement("SELECT d.name as facilityName , d.externalid as facilityId FROM facility d where d.externalid is not null AND d.community_id = ?");
+
+                    ps.setInt(1, district);
+                    rx = ps.executeQuery();
+                    while (rx.next()) {
                         FacilityData rD = new FacilityData(rx.getString(1), rx.getString(2));
                         FacRests.add(rD);
                     }
                 }
+
                 if (request.getParameter("regionSelected") != null) {
                     int region = Integer.parseInt(request.getParameter("regionSelected"));
                     ps = conn.prepareStatement("SELECT d.name as districts, d.id as districtsId from district d left join region r on r.id = d.region_id where r.id = ?");
@@ -94,13 +107,11 @@ public class orgsunit extends HttpServlet {
                     }
                 }
 
-                
-
                 conn.close();
-                if(request.getParameter("districtSelected") != null){
-                    resString = this.gson.toJson(FacRests); 
-                }else{
-                    resString = this.gson.toJson(rests); 
+                if (request.getParameter("subDistrictSelected") != null) {
+                    resString = this.gson.toJson(FacRests);
+                } else {
+                    resString = this.gson.toJson(rests);
                 }
                 PrintWriter out = response.getWriter();
                 response.setContentType("application/json");

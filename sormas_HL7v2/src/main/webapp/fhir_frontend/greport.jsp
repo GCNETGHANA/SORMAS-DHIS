@@ -321,6 +321,12 @@
                                                         </select>
                                                     </div>
                                                     <div class="form-group w-100 jsS">
+                                                        <label>Select Sub District</label>
+                                                        <br/>
+                                                        <select name="subDistrict" class="form-control subDistrictSelect" >
+                                                        </select>
+                                                    </div>
+                                                    <div class="form-group w-100 jsS">
                                                         <label>Select Facility</label>
                                                         <br/>
                                                         <select name="facility" class="form-control facilitySelect" >
@@ -452,13 +458,13 @@
                         data: [{text: "Select a district", id:0},...data],
                         placeholder: "Select a district",
                         allowClear: true,
-                        templateSelection: fetchFacilities
+                        templateSelection: fetchSubDistricts
                     })
                 }
                 
-                function fetchFacilities(state){
+                 function fetchSubDistricts(state){
                        if (!state.id || state.text == "Select a district") {
-                         $(".facilitySelect").empty()
+                         $(".subDistrictSelect").empty()
                         return state.text;
                     }
                     var district = state.id;
@@ -467,6 +473,45 @@
                         url: "/orgsunit",
                         data: {
                             districtSelected: district
+                        },
+                        success: function (d) {
+                            var cs = d.map((t, ind) => {
+                                return {
+                                    id: ind,
+                                    text: t
+                                }
+                            })
+                            fillSubDistricts(transformResponse(cs));
+                            
+                        }
+                    })
+                    
+                }
+                
+                
+                function fillSubDistricts(data){
+                    $(".subDistrictSelect").empty()
+                     $(".subDistrictSelect").select2({
+                        data: [{text: "Select a sub-district", id:0},...data],
+                        allowClear: true,
+                        placeholder: "Select a sub-district",
+                        templateSelection: fetchFacilities
+
+                    })
+                }
+
+                
+                function fetchFacilities(state){
+                       if (!state.id || state.text == "Select a sub-district") {
+                         $(".facilitySelect").empty()
+                        return state.text;
+                    }
+                    var district = state.id;
+                    $.ajax({
+                        type: "GET",
+                        url: "/orgsunit",
+                        data: {
+                            subDistrictSelected: district
                         },
                         success: function (d) {
                             var cs = d.map((t, ind) => {
