@@ -236,36 +236,40 @@
                                 <div class="card card-default">
                                     <div class="card-header">
                                         <h3 class="card-title">
-                                            <i class="fas fa-file"></i>
+                                            <i class="fas fa-cogs"></i>
                                             Report Scheduler
                                         </h3>
                                     </div>
                                     <div class="row d-flex flex-column justify-content-center align-items-center">
                                         <form onsubmit="event.preventDefault();sendgenerate(event.target)" class="row w-100">
-                                            <div class="col-lg-2"></div>
+                                            <div class="col-lg-4"></div>
+                                                
 
+                                            <div class="col-lg-4  d-flex flex-column  align-items-center p-5" >
+                                                <form class="w-100">
+                                                     <div class="form-group w-100">
+                                                        <label>Select Auto reporting schedule</label>
+                                                        <br>
+                                                        <select name="year" class="form-control js-select2" id="state_x" >
+                                                            <option selected>Every hour</option>
+                                                            <option >Every half day</option>
+                                                            <option >Every day</option>
+                                                            <option >Every week</option>
+                                                            <option >Every month</option>
+                                                            
 
-                                            <div class="col-lg-4 d-flex flex-column  align-items-center p-5" >
-                                                 <div class="row">
-                                                <div class="col s4">
-                                                    New Server?
-
-                                                    <div class="switch">
-                                                        <label >
-                                                            <span id="schedulerOn">Turn on scheduler</span>
-                                                            <span id="schedulerOff">Turn off scheduler</span>
-                                                            <input type="checkbox" <%//rx.getString(2)%> name="server" id="maintenance">
-                                                            <span class="lever"></span>
-                                                           
-                                                        </label>
+                                                        </select>
+                                                        
                                                     </div>
+                                                    
+                                                    <div class="w-100 d-flex flex-row justify-content-center">
+                                                        <button type="submit" class="btn btn-success btn-flat">
+                                                            Save
+                                                        </button>
 
-                                                </div>
-                                                <a class="btn btn-flat" onclick="openxx()">
-                                                    <i class="fa fa-angle-double-right"></i> Next
-                                                </a>
 
-                                            </div>
+                                                    </div>
+                                                </form>
                                             
                                             </div>
 
