@@ -140,6 +140,74 @@ public class greport extends HttpServlet {
     }
     
     
+    public static void AutoPost(int year, int month){
+         int district = 0, region  = 0, subDistrict = 0;
+         String facility = "";
+         
+        try {
+            Class.forName("org.postgresql.Driver");
+            Connection conn = DbConnector.getPgConnection();
+            ResultSet rx;
+
+            List<String> queries = new ArrayList<String>();
+            String where = getWhereClauses(region, district, facility, subDistrict);
+          
+            queries.add(report_case_outcome(where));
+            queries.add(report_case_classification(where));
+            queries.add(report_case_hospitalised(where));
+            queries.add(report_case_tested(where));
+            queries.add(lab_results(where));
+            queries.add(cases_in_icu(where));
+            queries.add(cases_by_treatment(where));
+             queries.add(cases_by_origin(where));
+
+            String query
+                    = "WITH q AS (\n"
+                    + String.join("\nUNION\n", queries) + "\n"
+                    + ")\n"
+                    + "SELECT * FROM q WHERE dataElement IS NOT NULL AND categoryOptionCombo IS NOT NULL";
+            System.out.println(query);
+            // System.out.println("\n\n\n\n\n\n\n\nquery for report: \n" + query);
+
+            NamedParameterStatement ps = new NamedParameterStatement(conn, query);
+            ps.setInt("year", year);
+            ps.setInt("month", month);
+
+            rx = ps.executeQuery();
+
+            List<DhimsDataValue> dhimsList = new ArrayList<DhimsDataValue>();
+            while (rx.next()) {
+                DhimsDataValue dh = new DhimsDataValue(rx.getString("dataElement"), rx.getString("categoryOptionCombo"), rx.getString("period"), rx.getString("orgUnit"), rx.getString("value"));
+                dhimsList.add(dh);
+            }
+
+            System.out.println("all orgUnits for report: " + dhimsList.size());
+
+            List<DhimsDataValue> dhimsList2 = new ArrayList<DhimsDataValue>();
+            for (DhimsDataValue d : dhimsList) {
+                if (d.orgUnit.length() > 0) {
+                    dhimsList2.add(d);
+                }
+            }
+            dhimsList = dhimsList2;
+            dhimsList2 = null;
+
+            System.out.println("valid orgUnits for report: " + dhimsList.size());
+
+            ServeResponse resp = DHIS2resolver.PostMethod("/api/dataValueSets", dhimsList, "dataValues");
+           System.out.println(resp);
+
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(greport.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException se) {
+            System.err.println(se);
+        } catch (Exception ef) {
+            System.err.println(ef);
+        }
+        
+    }
+    
+    
     static String getWhereClauses(int region, int district, String facility, int subDistrict){
             if(!"0".equals(facility) && !"".equals(facility)){
                 return "f.externalId = '"+facility+"' AND ";
