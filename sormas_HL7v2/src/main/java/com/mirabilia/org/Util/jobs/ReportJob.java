@@ -45,7 +45,7 @@ public class ReportJob implements Job {
         LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         int year  = localDate.getYear();
         int month = localDate.getMonthValue();
-        int day   = localDate.getDayOfMonth();
+        
         greport.AutoPost(year, month);
           
     }

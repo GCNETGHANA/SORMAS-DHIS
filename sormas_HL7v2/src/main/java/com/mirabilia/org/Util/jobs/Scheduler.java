@@ -25,6 +25,13 @@
  */
 package com.mirabilia.org.Util.jobs;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Enumeration;
+import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import org.quartz.CronScheduleBuilder;
@@ -44,31 +51,56 @@ import org.quartz.impl.StdSchedulerFactory;
  */
 public class Scheduler implements ServletContextListener {
 
+    static org.quartz.Scheduler sch;
 
-
-    @Override
-    public void contextInitialized(ServletContextEvent arg0) {
-         //To change body of generated methods, choose Tools | Templates.
-          try {
+    public static void shutdown() {
+        try {
+            sch.shutdown();
+        } catch (SchedulerException ex) {
+            Logger.getLogger(Scheduler.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public static void Start(){
+         try {
 
             JobDetail job = JobBuilder.newJob(ReportJob.class)
                     .withIdentity("reportJob")
                     .build();
 
-//            CronTrigger cronTrigger = TriggerBuilder.newTrigger()
-//                    .withIdentity("crontrigger", "crontriggergroup1")
-//                    .withSchedule(CronScheduleBuilder.cronSchedule("0 0 * * *"))
-//                    .build();
-            
+            String expression = getTitle("reportJobExpression");
             CronTrigger cronTrigger = TriggerBuilder.newTrigger()
                     .withIdentity("crontrigger", "crontriggergroup1")
-                    .withSchedule(CronScheduleBuilder.cronSchedule("0 0 0 * * ?"))
+                    .withSchedule(CronScheduleBuilder.cronSchedule(expression))
                     .build();
-            
-            
 
             SchedulerFactory schFactory = new StdSchedulerFactory();
-            org.quartz.Scheduler sch = schFactory.getScheduler();
+            sch = schFactory.getScheduler();
+            sch.start();
+            sch.scheduleJob(job, cronTrigger);
+
+        } catch (SchedulerException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void contextInitialized(ServletContextEvent arg0) {
+        //To change body of generated methods, choose Tools | Templates.
+        try {
+
+            JobDetail job = JobBuilder.newJob(ReportJob.class)
+                    .withIdentity("reportJob")
+                    .build();
+
+            String expression = getTitle("reportJobExpression");
+            CronTrigger cronTrigger = TriggerBuilder.newTrigger()
+                    .withIdentity("crontrigger", "crontriggergroup1")
+                    .withSchedule(CronScheduleBuilder.cronSchedule(expression))
+                    .build();
+
+            SchedulerFactory schFactory = new StdSchedulerFactory();
+            sch = schFactory.getScheduler();
             sch.start();
             sch.scheduleJob(job, cronTrigger);
 
@@ -79,7 +111,33 @@ public class Scheduler implements ServletContextListener {
 
     @Override
     public void contextDestroyed(ServletContextEvent arg0) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            sch.shutdown();
+        } catch (SchedulerException ex) {
+            Logger.getLogger(Scheduler.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public static String getTitle(String key) {
+
+        try {
+            String resourceName = "job.properties";
+            ClassLoader loader = Thread.currentThread().getContextClassLoader();
+            Properties props = new Properties();
+            InputStream resourceStream = loader.getResourceAsStream(resourceName);
+            props.load(resourceStream);
+
+            Enumeration enuKeys = props.keys();
+            while (enuKeys.hasMoreElements()) {
+                String value = props.getProperty(key);
+                return value;
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 
 }

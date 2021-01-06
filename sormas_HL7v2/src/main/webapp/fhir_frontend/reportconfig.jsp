@@ -234,28 +234,30 @@
                             <section class="col-lg-12 connectedSortable">
                                 <!-- TO DO List -->
                                 <div class="card card-default">
-                                    <div class="card-header">
+                                    <div class="card-header w-100 d-flex flex-row justify-content-between">
                                         <h3 class="card-title">
                                             <i class="fas fa-cogs"></i>
                                             Report Scheduler
                                         </h3>
+                                        <h3 class="card-title ml-auto">Current schedule : <span id="scheduleMain"></span></h3>
                                     </div>
                                     <div class="row d-flex flex-column justify-content-center align-items-center">
-                                        <form onsubmit="event.preventDefault();sendgenerate(event.target)" class="row w-100">
+                                      
                                             <div class="col-lg-4"></div>
                                                 
 
                                             <div class="col-lg-4  d-flex flex-column  align-items-center p-5" >
-                                                <form class="w-100">
+                                                
+                                                <form class="w-100" onsubmit="event.preventDefault();submitForm(event.target);">
                                                      <div class="form-group w-100">
                                                         <label>Select Auto reporting schedule</label>
                                                         <br>
-                                                        <select name="year" class="form-control js-select2" id="state_x" >
-                                                            <option selected>Every hour</option>
-                                                            <option >Every half day</option>
-                                                            <option >Every day</option>
-                                                            <option >Every week</option>
-                                                            <option >Every month</option>
+                                                        <select name="schedule" class="form-control js-select2" id="state_x" >
+                                                            <option value="everyHour" selected>Every hour</option>
+                                                            <option value="everyHalfDay" >Every half day</option>
+                                                            <option value="everyDay" >Every day</option>
+                                                            <option value="everyWeek" >Every week</option>
+                                                            <option value="everyMonth" >Every month</option>
                                                             
 
                                                         </select>
@@ -274,7 +276,7 @@
                                             </div>
 
                                            
-                                        </form>
+                                        
                                     </div>
                                 </div>
                             </section> 
@@ -320,7 +322,32 @@
 
 
             <script>
-            
+            $.ajax({
+                        type: "GET",
+                        url: "/JobSetter",
+                        success: function (f) {
+                            var sche  = f;
+                            $('#scheduleMain').text(sche);
+                        }
+                    })
+                    
+                    
+                    function submitForm(e){
+                        $.ajax({
+                        type: "POST",
+                        url: '/JobSetter',
+                        data: $(e).serialize(),
+                        success: function (s) {
+                                Swal.fire(
+                                    {
+                                        title: "Schedule updated successfully",
+                                        icon: "success",
+                                    }
+                            )
+                        }
+
+                    });
+                    }
               
 
             </script>
