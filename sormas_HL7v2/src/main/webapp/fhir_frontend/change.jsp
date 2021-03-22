@@ -1,3 +1,10 @@
+<%-- 
+    Document   : auth
+    Created on : Feb 8, 2021, 10:07:56 AM
+    Author     : Augustus otu
+--%>
+
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="java.sql.ResultSet"%>
 <%@page import="com.mirabilia.org.hzi.Util.dhis.optionFiler"%>
 <%@page import="java.util.logging.Logger"%>
@@ -7,7 +14,7 @@
 <%@page import="java.sql.Connection"%>
 <%@page import="java.sql.PreparedStatement"%>
 <%@page import="java.sql.PreparedStatement"%>
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+
 <!DOCTYPE html>
 <html lang="en">
     <jsp:include page="template/head.jsp"></jsp:include>
@@ -207,6 +214,50 @@
                         display: none;
                     }
 
+                    .vb{
+                        /*                        height: calc(2.25rem + 2px) !important;
+                                                background-color: white !important;*/
+                        background-color: white !important;
+                    }
+
+                    .ChangeP {
+                        position: relative;
+                        display: inline-block;
+                    }
+
+                    .ChangeP .tooltiptext {
+                        visibility: hidden;
+                        width: 140px;
+                        background-color: #555;
+                        color: #fff;
+                        text-align: center;
+                        border-radius: 6px;
+                        padding: 5px;
+                        position: absolute;
+                        z-index: 1;
+                        bottom: 150%;
+                        left: 50%;
+                        margin-left: -75px;
+                        opacity: 0;
+                        transition: opacity 0.3s;
+                    }
+
+                    .ChangeP .tooltiptext::after {
+                        content: "";
+                        position: absolute;
+                        top: 100%;
+                        left: 50%;
+                        margin-left: -5px;
+                        border-width: 5px;
+                        border-style: solid;
+                        border-color: #555 transparent transparent transparent;
+                    }
+
+                    .ChangeP:hover .tooltiptext {
+                        visibility: visible;
+                        opacity: 1;
+                    }
+
                 </style>
                 <!-- Content Wrapper. Contains page content -->
                 <div class="content-wrapper">
@@ -215,12 +266,12 @@
                         <div class="container-fluid">
                             <div class="row mb-2">
                                 <div class="col-sm-6">
-                                    <h2>Configure Reports</h2>
+                                    <h2>Authorizations</h2>
                                 </div>
                                 <div class="col-sm-6">
                                     <ol class="breadcrumb float-sm-right">
                                         <li class="breadcrumb-item"><a href="#">Home</a></li>
-                                        <li class="breadcrumb-item active">Configuration</li>
+                                        <li class="breadcrumb-item active">Authorizations</li>
                                     </ol>
                                 </div>
                             </div>
@@ -234,58 +285,47 @@
                             <section class="col-lg-12 connectedSortable">
                                 <!-- TO DO List -->
                                 <div class="card card-default">
-                                    <div class="card-header w-100 d-flex flex-row justify-content-between">
+                                    <div class="card-header">
                                         <h3 class="card-title">
-                                            <i class="fas fa-cogs"></i>
-                                            Report Scheduler
+                                            <i class="fas fa-file"></i>
+                                            Change your password
                                         </h3>
-                                        <h3 class="card-title ml-auto">Current schedule : <span id="scheduleMain"></span></h3>
                                     </div>
                                     <div class="row d-flex flex-column justify-content-center align-items-center">
-                                      
+                                        <form action="../ChangePassword" method="POST" class="row w-100">
                                             <div class="col-lg-4"></div>
-                                                
 
-                                            <div class="col-lg-4  d-flex flex-column  align-items-center p-5" >
-                                                
-                                                <form class="w-100" action="/JobSetter" method="POST">
-                                                     <div class="form-group w-100">
-                                                        <label>Select Auto reporting schedule</label>
-                                                        <br>
-                                                        <select name="schedule" class="form-control js-select2" id="state_x" >
-                                                            <option value="everyHour" selected>Every hour</option>
-                                                            <option value="everyHalfDay" >Every half day</option>
-                                                            <option value="everyDay" >Every day</option>
-                                                            <option value="everyWeek" >Every week</option>
-                                                            <option value="everyMonth" >Every month</option>
-                                                            
 
-                                                        </select>
-                                                        
+                                            <div class="col-lg-4 d-flex flex-column  align-items-center p-5" >
+                                                <div class="w-100 d-flex flex-column">
+                                                    <div class="form-group w-100 d-flex flex-column">
+                                                        <label for="oldPassword">Old Password</label>
+                                                        <input required id="oldPassword" name="oldPassword"  type="password" class="form-control vb"/>
                                                     </div>
-                                                    <div class="form-group w-100 d-flex flex-row align-items-center">
-                                                        <label>Check to auto submit last activity</label>
-                                                        <input type="checkbox" class="form-control" name="lastAct"/>
-                                                        
-                                                            
-
-                                                        </select>
-                                                        
+                                                    <div class="form-group w-100 d-flex flex-column">
+                                                        <label for="newPassword">New Password</label>
+                                                        <input required readonly="readonly" id="newPassword" name="newPassword" type="password" class="form-control vb"/>
                                                     </div>
-                                                    
+                                                    <button type="button " class="btn btn-sm btn-primary" onclick="autoGen()">Click to auto generate password</button>
+
                                                     <div class="w-100 d-flex flex-row justify-content-center">
-                                                        <button type="submit" class="btn btn-success btn-flat">
-                                                            Save
+                                                        <div style="display:none;" class="lds-facebook"><div></div><div></div><div></div></div>
+                                                    </div>
+
+                                                    <div class="w-100 d-flex flex-column align-items-center justify-content-center" id="ChangeP">
+                                                        <span class="tooltiptext m-3" id="myTooltip"></span>
+                                                        <button id="generateBtn" type="submit" class="btn btn-success btn-flat">
+                                                            Change Password
                                                         </button>
 
 
                                                     </div>
-                                                </form>
-                                            
+
+                                                </div>
                                             </div>
 
-                                           
-                                        
+
+                                        </form>
                                     </div>
                                 </div>
                             </section> 
@@ -331,33 +371,129 @@
 
 
             <script>
-            $.ajax({
-                        type: "GET",
-                        url: "/JobSetter",
-                        success: function (f) {
-                            var sche  = f;
-                            $('#scheduleMain').text(sche);
-                        }
-                    })
-                    
-                    
-                    function submitForm(e){
-                        $.ajax({
-                        type: "POST",
-                        url: '/JobSetter',
-                        data: $(e).serialize(),
-                        success: function (s) {
-                                Swal.fire(
-                                    {
-                                        title: "Schedule updated successfully",
-                                        icon: "success",
-                                    }
-                            )
-                        }
 
-                    });
+                function autoGen() {
+                    let inp = document.getElementById("newPassword");
+                    var randomstring = Math.random().toString(36).slice(-9);
+                    inp.value = randomstring;
+                    inp.select();
+                    navigator.clipboard.writeText(randomstring)
+                    .then(() => { alert(`Password copied to your clipboard, please keep it safe`) })
+                    .catch((error) => { alert(`Copy failed! ${error}`) })
+                    var tooltip = document.getElementById("myTooltip");
+                    tooltip.innerHTML = "Password copied: "+inp.value;
+                }
+                function step(e) {
+                    $("#" + e).addClass("disabledbutton");
+                    $("#" + e).toggleClass("callout-success");
+                    // alert("#2_" + e);
+                    $("#2_" + e).show(500);
+                    checker();
+                }
+                function checker() {
+                    if ($("#only_").prop("checked") === true) {
+                        $(".only_").prop("checked", false);
+                        $('#non_app').show();
+                        $('#non_app_').html('Please select the lowest level you will like the sync with DHIS2');
+                        // alert("You have selected Aggregate only, hence, all other options are disabled");
+                    } else {
+                        //  alert("You have selected Aggregate only");
+                        $('#non_app').hide();
+                        $('#non_app_').html('Not applicable... please click on next');
                     }
-              
+                    ;
+
+                    if ($("#maintenance").prop("checked") === true) {
+
+                    } else {
+
+                        $('#p_maintenance').show(100);
+                        $('#2_stepx').remove();
+                    }
+                    ;
+
+                }
+
+
+
+                //maintenance
+
+                function checkerX() {
+                    if ($("#instll").prop("checked") === true) {
+                        $("#instllx").show(1000);
+                        $("#instllx_").hide(1000);
+
+
+                    } else {
+                        $("#instllx").hide(1000);
+                        $("#instllx_").show(1000);
+                    }
+
+                }
+
+
+
+
+
+
+                ;
+
+                $('a.nope').click(function () {
+                    return false;
+                })
+
+
+                function start_pushX_() {
+
+
+                    document.getElementById("overlay").style.display = "block";
+                    $('#text').html("Pushing all available matched data to sormas...");
+                    var xhr = new XMLHttpRequest();
+                    xhr.open('GET', '../iopujlksrefdxcersdfxcedrtyuilkmnbvsdfghoiuytrdcvbnmkiuytrewsazsedfcd345678?aggregatToDHIS=true', true);
+                    xhr.responseType = 'text';
+                    xhr.onload = function () {
+
+                        if (xhr.readyState === xhr.DONE) {
+                            if (xhr.status === 200) {
+
+                                document.getElementById("overlay").style.display = "none";
+
+                                alert('response from server  : ' + xhr.responseText);
+
+                            }
+                        }
+                    };
+                    xhr.send(null);
+
+                }
+                ;
+
+
+
+
+
+
+                function get() {
+                    $('#fomX').submit();
+                    req = new XMLHttpRequest();
+                    req.open("GET", '../iopujlksrefdxcersdfxcedrtyuilkmnbvsdfghoiuytrdcvbnmkiuytrewsazsedfcd345678?PUSHRESULTS=true', true);
+                    req.send();
+                    req.onload = function () {
+
+                        json = JSON.parse(req.responseText);
+                        var jsonViewer = new JSONViewer();
+                        document.querySelector("#xdb").appendChild(jsonViewer.getContainer());
+
+
+                        jsonViewer.showJSON(json, -1, -1);
+
+                    };
+
+
+                    $('#RespondX').modal('show');
+                }
+
+
 
             </script>
     </body>
