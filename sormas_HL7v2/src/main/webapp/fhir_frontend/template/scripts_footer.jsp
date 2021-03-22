@@ -30,40 +30,12 @@
         <script src="./mira_assets/js/sweetalert2.min.js"></script>
         <script src="./mira_assets/js/json-viewer.js" type="text/javascript"></script>
         <script>
-                   
+                    function cases(){
+                      $("#facl ul").hide(1000);
+                    }
                     
                     
                     function cases_(){
-                        let el = $("#facl ul");
-                     if(el.css('display') == 'none'){
-                         el.show(500)
-                     }else {
-                         el.hide(500)
-                     }
-                    }
-                     function auth_(){
-                         debugger
-                        let el = $("#pacl ul");
-                     if($("#pacl ul").css('display') == 'none'){
-                         $("#pacl ul").show(500)
-                     }else {
-                         $("#pacl ul").hide(500)
-                     }
-                    }
-                     function base_(){
-                        var el = $("#cacl ul");
-                     if(el.css('display') == 'none'){
-                         el.show(500)
-                     }else {
-                         el.hide(500)
-                     }
-                    }
-                    function report_(){
-                        var el = $("#racl ul");
-                     if(el.css('display') == 'none'){
-                         el.show(500)
-                     }else {
-                         el.hide(500)
-                     }
+                      $("#caxl ul").hide(1000);
                     }
                 </script>

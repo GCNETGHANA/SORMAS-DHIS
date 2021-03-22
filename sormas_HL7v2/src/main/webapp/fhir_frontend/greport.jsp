@@ -260,7 +260,6 @@
                                                         <label>Select Year</label>
                                                         <br>
                                                         <select name="year" class="form-control js-select2" id="state_x" >
-                                                            <option selected>2021</option>
                                                             <option selected>2020</option>
                                                             <option >2019</option>
                                                             <option >2018</option>
@@ -560,7 +559,6 @@
                     $.ajax({
                         type: "POST",
                         url: '/greport',
-                        timeout: 15000,
                         data: $(e).serialize(),
                         success: function (s) {
                             $('.lds-facebook').hide();

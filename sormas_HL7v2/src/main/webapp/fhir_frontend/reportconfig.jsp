@@ -248,7 +248,7 @@
 
                                             <div class="col-lg-4  d-flex flex-column  align-items-center p-5" >
                                                 
-                                                <form class="w-100" action="/JobSetter" method="POST">
+                                                <form class="w-100" onsubmit="event.preventDefault();submitForm(event.target);">
                                                      <div class="form-group w-100">
                                                         <label>Select Auto reporting schedule</label>
                                                         <br>
@@ -258,15 +258,6 @@
                                                             <option value="everyDay" >Every day</option>
                                                             <option value="everyWeek" >Every week</option>
                                                             <option value="everyMonth" >Every month</option>
-                                                            
-
-                                                        </select>
-                                                        
-                                                    </div>
-                                                    <div class="form-group w-100 d-flex flex-row align-items-center">
-                                                        <label>Check to auto submit last activity</label>
-                                                        <input type="checkbox" class="form-control" name="lastAct"/>
-                                                        
                                                             
 
                                                         </select>

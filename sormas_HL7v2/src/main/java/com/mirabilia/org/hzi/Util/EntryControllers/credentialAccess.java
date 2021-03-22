@@ -25,11 +25,8 @@
  */
 package com.mirabilia.org.hzi.Util.EntryControllers;
 
-import com.mirabilia.org.hzi.Util.Users;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.security.spec.InvalidKeySpecException;
-import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -45,7 +42,7 @@ import javax.servlet.http.HttpSession;
  * @author Mathew
  */
 
-@WebServlet(name = "login", urlPatterns = {"/login"})
+@WebServlet(name = "drtyuioihgfdsdtyuiojhfdrtyuiokjhgfde5678ijhvde5678iokjhgfr56789ijhgfde45678uij", urlPatterns = {"/drtyuioihgfdsdtyuiojhfdrtyuiokjhgfde5678ijhvde5678iokjhgfr56789ijhgfde45678uij"})
 public class credentialAccess extends HttpServlet {
 
     @Override
@@ -67,28 +64,28 @@ public class credentialAccess extends HttpServlet {
         
 
         if (request.getParameter("usern") != null && request.getParameter("upass") != null) {
-            String username = request.getParameter("usern");
-            String password = request.getParameter("upass");
-            try{
-                        Users user = AuthUser.validate(username, password);
-                        if(user.loggedIn){
-                        Logger.getLogger(credentialAccess.class.getName()).log(Level.INFO, "User Logged in was successful: ADMINISTRATOR");
-                        sessionx.setAttribute("xloggedx", "true");
-                        sessionx.setAttribute("user", username);
-                        sessionx.setAttribute("userId", user.id);
-                        sessionx.setAttribute("access", user.access);
-                        response.sendRedirect("fhir_frontend/adapter_frontend.jsp");
-                        }else {
-                            response.sendRedirect("fhir_frontend/lockpage.jsp");
-                        }
-                   } catch (ClassNotFoundException ex) {
-                         Logger.getLogger(credentialAccess.class.getName()).log(Level.SEVERE, null, ex);
-                     } catch (SQLException ex) {
-                         Logger.getLogger(credentialAccess.class.getName()).log(Level.SEVERE, null, ex);
-                     } catch (InvalidKeySpecException ex) {
-                         Logger.getLogger(credentialAccess.class.getName()).log(Level.SEVERE, null, ex);
-                     }
+
+            if (request.getParameter("usern").equals("Administator")) {
+                 System.out.println("Get Method in use...");
+
+                if (request.getParameter("upass").equals("qwerty")) {
+                     System.out.println("Get Method in use...");
+
+                    Logger.getLogger(credentialAccess.class.getName()).log(Level.INFO, "User Logged in was successful: ADMINISTRATOR");
+                    sessionx.setAttribute("xloggedx", "true");
+                    response.sendRedirect("fhir_frontend/adapter_frontend.jsp");
                     
+                } else {
+                    Logger.getLogger(credentialAccess.class.getName()).log(Level.INFO, "User Logged in was denailed: password/username not match");
+                    response.sendRedirect("logout.jsp");
+
+                }
+            } else {
+
+                Logger.getLogger(credentialAccess.class.getName()).log(Level.INFO, "User Logged in was denailed: password/username not match");
+                response.sendRedirect("logout.jsp");
+
+            }
 
         } else {
             Logger.getLogger(credentialAccess.class.getName()).log(Level.INFO, "User Logged in was denailed: password/username not match");

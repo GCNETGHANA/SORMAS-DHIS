@@ -23,10 +23,9 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package com.mirabilia.org.hzi.Util;
+package com.mirabilia.org.hzi.sormas;
 
 import com.mirabilia.org.Util.jobs.Scheduler;
-import com.mirabilia.org.hzi.sormas.doa.DbConnector;
 import static com.mirabilia.org.hzi.sormas.greport.getBody;
 import java.io.File;
 import java.io.FileInputStream;
@@ -37,10 +36,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.security.Policy.Parameters;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Enumeration;
 import java.util.Map;
 import java.util.Properties;
@@ -52,7 +47,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import org.apache.commons.configuration.PropertiesConfiguration;
 
 
@@ -122,20 +116,15 @@ public class JobSetter extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
-            HttpSession session = request.getSession();
-            int userId = (int)session.getAttribute("userId");
-            String title = request.getParameter("schedule");
-            String last = request.getParameter("lastAct");
-            if(last.equals("on")){
-                updateActivity(last, userId);
-            }
+            Map<String, String> payloadRequest = getBody(request);
+            String title = payloadRequest.get("schedule");
             String expression = getExpression(title);
             String theTitle = getMainTitle(title);
             PrintWriter out = response.getWriter();
             response.setContentType("text/html;charset=UTF-8");
             Boolean done = setTitle(theTitle, expression);
             if(done){
-                response.sendRedirect("fhir_frontend/adapter_frontend.jsp");
+                Scheduler.shutdown();
                 out.println("Successful operation");
             }else{
                 out.println("An error occured");
@@ -144,44 +133,7 @@ public class JobSetter extends HttpServlet {
             Logger.getLogger(JobSetter.class.getName()).log(Level.SEVERE, null, ex);
         } catch (org.apache.commons.configuration.ConfigurationException ex) {
             Logger.getLogger(JobSetter.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SQLException ex) {
-            Logger.getLogger(JobSetter.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }
-    
-   
-    
-    private void updateActivity(String value, int user) throws SQLException{
-        try {
-            PreparedStatement ps, ps1, ps2;
-            Class.forName("com.mysql.jdbc.Driver");
-            Connection conn = DbConnector.getConnection();
-            
-            String str = "";
-            try {
-                ps = conn.prepareStatement("Select count(*) FROM activities WHERE user=?");
-                ps.setInt(1,user);
-                ResultSet rs = ps.executeQuery();
-                if(rs.next()){
-                ps1 = conn.prepareStatement("INSERT into activities ('lastActivity', 'user') VALUES(?, ?)");
-                ps.setString(1,value);
-                ps1.setInt(2,user);
-                ps1.execute();
-                    
-                }else {
-                ps2 = conn.prepareStatement("UPDATE activities SET lastActivity=? where user = ?");
-                ps2.setString(1,value);
-                ps2.setInt(2,user);
-                ps2.execute(); 
-                }
-            } catch (SQLException ex) {
-                Logger.getLogger(AddUser.class.getName()).log(Level.SEVERE, null, ex);
-            } finally {
-                conn.close();
-            }
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(JobSetter.class.getName()).log(Level.SEVERE, null, ex);
-        }  
     }
     
     
