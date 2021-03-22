@@ -51,11 +51,12 @@ public class DbConnector {
             String databseUserName = "root";
             String databasePassword = "123456";
             Connection con = null;
-
+ System.out.println("jdbc:postgresql://" + d1 + ":" + d2 + "/" + d3+","+ d4+"," +d5);
             // System.out.println("jdbc:postgresql://" + d1 + ":" + d2 + "/" + d3 +","+  d4+",_"+ d5);
             return DriverManager.getConnection("jdbc:postgresql://" + d1 + ":" + d2 + "/" + d3, d4, d5);
 
         } catch (Exception ex) {
+           
             System.out.println("Several!, Postgresql Database getConnection() has an Error -->" + ex.getMessage());
         }
         return null;

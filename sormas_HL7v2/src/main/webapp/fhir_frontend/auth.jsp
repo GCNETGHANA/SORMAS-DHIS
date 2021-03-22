@@ -1,3 +1,10 @@
+<%-- 
+    Document   : auth
+    Created on : Feb 8, 2021, 10:07:56 AM
+    Author     : Augustus otu
+--%>
+
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="java.sql.ResultSet"%>
 <%@page import="com.mirabilia.org.hzi.Util.dhis.optionFiler"%>
 <%@page import="java.util.logging.Logger"%>
@@ -7,7 +14,7 @@
 <%@page import="java.sql.Connection"%>
 <%@page import="java.sql.PreparedStatement"%>
 <%@page import="java.sql.PreparedStatement"%>
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+
 <!DOCTYPE html>
 <html lang="en">
     <jsp:include page="template/head.jsp"></jsp:include>
@@ -206,6 +213,12 @@
                     .jsS span{
                         display: none;
                     }
+                    
+                    .vb{
+/*                        height: calc(2.25rem + 2px) !important;
+                        background-color: white !important;*/
+        background-color: white !important;
+                    }
 
                 </style>
                 <!-- Content Wrapper. Contains page content -->
@@ -215,12 +228,12 @@
                         <div class="container-fluid">
                             <div class="row mb-2">
                                 <div class="col-sm-6">
-                                    <h2>Generate DHIMS Report</h2>
+                                    <h2>Add user authorizations</h2>
                                 </div>
                                 <div class="col-sm-6">
                                     <ol class="breadcrumb float-sm-right">
                                         <li class="breadcrumb-item"><a href="#">Home</a></li>
-                                        <li class="breadcrumb-item active">Configuration</li>
+                                        <li class="breadcrumb-item active">Authorizations</li>
                                     </ol>
                                 </div>
                             </div>
@@ -237,68 +250,41 @@
                                     <div class="card-header">
                                         <h3 class="card-title">
                                             <i class="fas fa-file"></i>
-                                            Report generator
+                                            Add user and regions to manage
                                         </h3>
                                     </div>
                                     <div class="row d-flex flex-column justify-content-center align-items-center">
-                                        <form onsubmit="event.preventDefault();sendgenerate(event.target)" class="row w-100">
+                                        <form action="../AddUser" method="POST" class="row w-100">
                                             <div class="col-lg-2"></div>
 
 
                                             <div class="col-lg-4 d-flex flex-column  align-items-center p-5" >
-                                                <div class="w-100">
-                                                    <div class="form-group w-100">
-                                                        <label>Select Report</label>
-                                                        <br>
-                                                        <select name="year" class="form-control js-select2" >
-                                                            <option selected>Monthly COVID-19 report</option>
-
-
-                                                        </select>
+                                                <div class="w-100 d-flex flex-column">
+                                                    <div class="form-group w-100 d-flex flex-column">
+                                                        <label for="username">Username</label>
+                                                      
+                                                        <input id="username" name="username" class="form-control vb"/>
+                                                    </div>
+                                                    <div class="form-group w-100 d-flex flex-column">
+                                                        <label for="username">Password</label>
+                                                        <input id="password" name="password" type="password" class="form-control vb"/>
                                                     </div>
                                                     <div class="form-group w-100">
-                                                        <label>Select Year</label>
-                                                        <br>
-                                                        <select name="year" class="form-control js-select2" id="state_x" >
-                                                            <option selected>2021</option>
-                                                            <option selected>2020</option>
-                                                            <option >2019</option>
-                                                            <option >2018</option>
-                                                            <option >2017</option>
-                                                            <option >2016</option>
-                                                            <option >2015</option>
-                                                            <option >2014</option>
-                                                            <option >2013</option>
-                                                            <option >2012</option>
-
+                                                        <label>Access Level</label>
+                              
+                                                        <select name="access" class="form-control" >
+                                                            <option selected value="normal">Normal</option>
+                                                            <option value="admin">Administrator</option>
                                                         </select>
                                                     </div>
-                                                    <div class="form-group w-100">
-                                                        <label>Select Month</label>
-                                                        <br>
-                                                        <select name="month" class="form-control js-select2" id="state_x" >
-                                                            <option value="1" selected>January</option>
-                                                            <option value="2" >February</option>
-                                                            <option value="3" >March</option>
-                                                            <option value="4" >April</option>
-                                                            <option value="5" >May</option>
-                                                            <option value="6" >June</option>
-                                                            <option value="7" >July</option>
-                                                            <option value="8" >August</option>
-                                                            <option value="9" >September</option>
-                                                            <option value="10" >October</option>
-                                                            <option value="11" >November</option>
-                                                            <option value="12" >December</option>
-
-                                                        </select>
-                                                    </div>
+                                                    
                                                     <div class="w-100 d-flex flex-row justify-content-center">
                                                         <div style="display:none;" class="lds-facebook"><div></div><div></div><div></div></div>
                                                     </div>
                                                     
                                                     <div class="w-100 d-flex flex-row justify-content-center">
                                                         <button id="generateBtn" type="submit" class="btn btn-success btn-flat">
-                                                            Generate & Send to DHIMS
+                                                            Add user
                                                         </button>
 
 
@@ -308,6 +294,7 @@
                                             </div>
 
                                             <div class="col-lg-4 d-flex flex-column  align-items-center p-5">
+                                               
                                                 <div class="w-100 d-flex flex-column align-items-center">
                                                     <div class="form-group w-100 jsS">
                                                         <label>Select Region</label>
@@ -560,7 +547,6 @@
                     $.ajax({
                         type: "POST",
                         url: '/greport',
-                        timeout: 15000,
                         data: $(e).serialize(),
                         success: function (s) {
                             $('.lds-facebook').hide();
