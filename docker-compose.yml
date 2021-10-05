@@ -1,0 +1,72 @@
+version: '3'
+services:
+  psql:
+    restart: unless-stopped
+    image: postgis/postgis:12-3.0-alpine
+    # image: postgres:12.4-alpine
+    # image: msfocbehealth/dhis2-database:10-alpine
+    command: postgres -c max_locks_per_transaction=100
+    environment:
+      POSTGRES_USER: dhis
+      POSTGRES_DB: dhis2
+      POSTGRES_PASSWORD: dhis
+    # volumes:
+      # - ./dhims.sql:/opt/dhis.sql
+  dhis:
+    restart: unless-stopped
+    image: dhis2/core:2.31.0-tomcat-8.5.34-jre8-alpine
+    # image: dhis2/core:2.34.2-tomcat-8.5.34-jre8-alpine
+    # image: dhis2/core:2.35.0-tomcat-8.5.34-jre8-alpine
+    volumes:
+      - ./dhis.conf:/DHIS2_home/dhis.conf
+    environment:
+      - WAIT_FOR_DB_CONTAINER=psql:5432 -t 0
+    ports:
+      - "8085:8080"
+    depends_on:
+      - psql
+  mysql:
+    restart: unless-stopped
+    image: mysql:8.0.21
+    environment:
+      MYSQL_DATABASE: sormas_
+      MYSQL_ROOT_PASSWORD: root
+      JDBC_PARAMS: 'useSSL=false'
+    volumes:
+      - ./hzi_dapters.sql:/docker-entrypoint-initdb.d/hzi_dapters.sql
+    # ports:
+    #   - 3306:3306
+  adminer:
+    restart: unless-stopped
+    image: adminer
+    # ports:
+    #   - 8087:8080
+    links:
+      - mysql:db
+  adapter:
+    restart: unless-stopped
+    image: tomcat:9-jdk15-openjdk
+    volumes:
+      # - ./sormas_HL7v2-1.0.2-debug-1.war:/usr/local/tomcat/webapps/ROOT.war
+      - ./SORMAS-DHIS/sormas_HL7v2/target/sormas_HL7v2-1.0.0.war:/usr/local/tomcat/webapps/ROOT.war
+      # - ./SORMAS-DHIS/sormas_HL7v2/target/sormas_HL7v2_3-2.3.1.1.war:/usr/local/tomcat/webapps/ROOT.war
+      # - ./sormas_HL7v2-1.0.0.war:/usr/local/tomcat/webapps/ROOT.war
+      - ./somars.conf:/root/somars.conf
+    environment:
+      - WAIT_FOR_DB_CONTAINER=mysql:3306 -t 0
+      - _JAVA_OPTIONS:'-Xmx2g'
+      # - JAVA_OPTIONS:'-XX:PermSize=1024m -XX:MaxPermSize=512m'
+      # - JAVA_OPTS="-XX:PermSize=1024m -XX:MaxPermSize=512m"
+      # - JAVA_OPTS=-Xmx3095m -Xms2028m
+      # - JDK_JAVA_OPTIONS:-XX:PermSize=5024m -XX:MaxPermSize=1012m
+      # - "JAVA_OPTS=-javaagent:/xrebel.jar -Dsupplements.host=supplements"
+      # - JDK_JAVA_OPTIONS=-javaagent:/xrebel.jar -Dsupplements.host=supplements
+
+      # - JDK_JAVA_OPTIONS="-Djava.security.egd=file:/dev/./urandom -Djava.awt.headless=true -Xmx5012m -XX:MaxPermSize=1056m -XX:+UseConcMarkSweepGC"
+      # - JDK_JAVA_OPTIONS="-Xmx1999m -XX:MaxPermSize=512m"
+      - JDK_JAVA_OPTIONS="-Djava.security.egd=file:/dev/./urandom -Djava.awt.headless=true -Xms1824m -Xmx1824m -XX:MaxPermSize=512m -XX:+UseConcMarkSweepGC"
+      - ENV JDK_JAVA_OPTS="-Djava.security.egd=file:/dev/./urandom -Djava.awt.headless=true -Xms1824m -Xmx1824m -XX:MaxPermSize=512m -XX:+UseConcMarkSweepGC"
+    ports:
+      - "8086:8080"
+    depends_on: 
+      - mysql

@@ -49,6 +49,7 @@ public class greport extends HttpServlet {
         Map<String, String> payloadRequest = getBody(request);
         int year = Integer.parseInt(payloadRequest.get("year"));
         int month = Integer.parseInt(payloadRequest.get("month"));
+        System.out.println("----The year selected is: " + year + " and Month: " + month);
         if(Integer.parseInt(payloadRequest.get("region")) == 0){
       
         }else if(Integer.parseInt(payloadRequest.get("district")) == 0){

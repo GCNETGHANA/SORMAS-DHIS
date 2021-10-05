@@ -260,7 +260,8 @@
                                                         <label>Select Year</label>
                                                         <br>
                                                         <select name="year" class="form-control js-select2" id="state_x" >
-                                                            <option selected>2020</option>
+                                                            <option selected>2021</option>
+                                                            <option >2020</option>
                                                             <option >2019</option>
                                                             <option >2018</option>
                                                             <option >2017</option>
@@ -269,7 +270,6 @@
                                                             <option >2014</option>
                                                             <option >2013</option>
                                                             <option >2012</option>
-
                                                         </select>
                                                     </div>
                                                     <div class="form-group w-100">
@@ -381,19 +381,26 @@
 
 
             <script>
+                var cPath = "/tools/dhims";
+                // var cPath = "";
+                // var cpath = window.location.pathname.substring(1, window.location.pathname.indexOf("/",3));
+
                 function countrySelect(val){
                     if($("#countrySelector").is(':checked')){
                         $(".regionSelect").empty();
                         $(".districtSelect").empty();
                         $(".facilitySelect").empty();
                     }else{
-                        getRegions();
+                     getRegions();
                     }
                 }
                 function getRegions(){
+                        // console.log("cpath path is: " + cpath);
+                        console.log("cPath path is: " + cPath);
+
                       $.ajax({
                         type: "GET",
-                        url: "/orgsunit",
+                        url: cPath+'/orgsunit',
                         data: {
                             region: "yes"
                         },
@@ -412,7 +419,7 @@
                 try {
                   getRegions();
                 } catch (e) {
-                    console.error(e)
+                    console.error(e);
                 }
                 
                 function transformResponse(data){
@@ -436,7 +443,7 @@
                     var region = state.id;
                     $.ajax({
                         type: "GET",
-                        url: "/orgsunit",
+                        url: cPath+"/orgsunit",
                         data: {
                             regionSelected: region
                         },
@@ -470,7 +477,7 @@
                     var district = state.id;
                     $.ajax({
                         type: "GET",
-                        url: "/orgsunit",
+                        url: cPath+"/orgsunit",
                         data: {
                             districtSelected: district
                         },
@@ -509,7 +516,7 @@
                     var district = state.id;
                     $.ajax({
                         type: "GET",
-                        url: "/orgsunit",
+                        url: cPath+"/orgsunit",
                         data: {
                             subDistrictSelected: district
                         },
@@ -558,7 +565,7 @@
                     $('#generateBtn').prop('disabled', true);
                     $.ajax({
                         type: "POST",
-                        url: '/greport',
+                        url: cPath+'/greport',
                         data: $(e).serialize(),
                         success: function (s) {
                             $('.lds-facebook').hide();
@@ -573,11 +580,10 @@
 
 
 
-                            if (f.status != "SUCCESS") {
+                            if (f.status == "ERROR") {
                                 Swal.fire("Error", "Please try again", "error");
                                 return;
                             }
-
 
                             Swal.fire(
                                     {
@@ -657,7 +663,9 @@
                     document.getElementById("overlay").style.display = "block";
                     $('#text').html("Pushing all available matched data to sormas...");
                     var xhr = new XMLHttpRequest();
-                    xhr.open('GET', '../iopujlksrefdxcersdfxcedrtyuilkmnbvsdfghoiuytrdcvbnmkiuytrewsazsedfcd345678?aggregatToDHIS=true', true);
+                    var p = cPath+'/iopujlksrefdxcersdfxcedrtyuilkmnbvsdfghoiuytrdcvbnmkiuytrewsazsedfcd345678?aggregatToDHIS=true';
+                    xhr.open('GET', p, true);
+                    // xhr.open('GET', '../iopujlksrefdxcersdfxcedrtyuilkmnbvsdfghoiuytrdcvbnmkiuytrewsazsedfcd345678?aggregatToDHIS=true', true);
                     xhr.responseType = 'text';
                     xhr.onload = function () {
 
