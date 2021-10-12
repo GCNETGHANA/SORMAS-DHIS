@@ -86,7 +86,7 @@ public class greport extends HttpServlet {
             queries.add(lab_results());
             queries.add(cases_in_icu());
             queries.add(cases_by_treatment());
-             queries.add(cases_by_origin());
+            queries.add(cases_by_origin());
 
             String query
                     = "WITH q AS (\n"
@@ -293,61 +293,36 @@ public class greport extends HttpServlet {
         }
 
         return "SELECT\n"
-                + "\n"
                 + "COALESCE(f.externalid, '') orgUnit,\n"
-                + "\n"
                 + "TO_CHAR(COALESCE(c.classificationdate, c.reportdate), 'YYYYMM') \"period\",\n"
-                + "\n"
                 + "CASE\n"
-                + age_gender_when_clause
-                + "\n"
+                + age_gender_when_clause + "\n"
                 + "END categoryOptionCombo,\n"
-                + "\n"
                 + "CASE h.testresult\n"
-                + "\n"
                 + "WHEN NULL THEN NULL\n"
                 + "else 'ws1Zf3jodFM'\n"
-                + "\n"
                 + "END dataElement,\n"
-                + "\n"
                 + "COUNT(distinct(c.id)) \"value\"\n"
-                + "\n"
                 + "FROM cases c\n"
-                + "\n"
                 + "LEFT JOIN person p ON c.person_id = p.id\n"
-                + "\n"
                 + "LEFT JOIN facility f ON c.healthfacility_id = f.id\n"
-                + "\n"
                 + "LEFT JOIN samples s ON c.id = s.associatedcase_id\n"
-                + "\n"
                 + "LEFT JOIN pathogentest h ON s.id = h.sample_id\n"
-                + "\n"
                 + "WHERE\n"
-                + "\n"
                 + "h.testresult IS NOT NULL \n"
-                + "\n"
                 + "AND date_part('year', COALESCE(h.creationdate)) = :year\n"
-                + "\n"
                 + "AND date_part('month', COALESCE(h.creationdate)) = :month\n"
-                + "\n"
                 + "AND c.disease = 'CORONAVIRUS'\n"
-                + "\n"
                 + "GROUP BY\n"
-                + "\n"
                 + "f.externalid,\n"
-                + "\n"
                 + "to_char(COALESCE(c.classificationdate, c.reportdate), 'YYYYMM'),\n"
                 + "h.testresult,\n"
-                + "\n"
                 + "CASE\n"
-                + age_gender_when_clause
-                + "\n"
+                + age_gender_when_clause + "\n"
                 + "END,\n"
-                + "\n"
                 + "c.caseclassification";
     }
-
-    
+ 
     static String lab_results(){
         return " SELECT\n" +
 "      COALESCE (f.externalid, '') orgUnit,\n" +
@@ -392,6 +367,7 @@ public class greport extends HttpServlet {
 "   GROUP BY\n" +
 "      f.externalid, to_char( COALESCE ( C.classificationdate, C.reportdate ), 'YYYYMM' ), h.testresult ";
     }
+
     static String cases_in_icu(){
         return "SELECT\n" +
 "      COALESCE (f.externalid, '') orgUnit,\n" +
@@ -432,6 +408,7 @@ public class greport extends HttpServlet {
 "	  \n" +
 "	  ";
     }
+
     static String cases_by_treatment(){
         return "SELECT\n" +
 "      COALESCE (f.externalid, '') orgUnit,\n" +
@@ -523,6 +500,7 @@ public class greport extends HttpServlet {
 "   GROUP BY\n" +
 "      f.externalid, to_char( COALESCE (C.classificationdate, C.reportdate ), 'YYYYMM' ), C.caseorigin, c.caseclassification";
     }
+
     public static Map<String, String> getBody(HttpServletRequest request) throws IOException {
 
         String body = null;
@@ -562,5 +540,4 @@ public class greport extends HttpServlet {
         }
         return sMap;
     }
-
 }
