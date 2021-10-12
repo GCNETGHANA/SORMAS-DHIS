@@ -57,7 +57,7 @@ ARG SORMAS-DHIS2_SERVER_URL=hzi-hl7.mirabilialtd.com
 ARG DOMAIN_NAME=sormas-dhis
 ARG DB_NAME=sormas-dhis
 
-ARG JVM_MAX=2096m
+ARG JVM_MAX=4096m
 
 ARG SORMAS_URL=https://github.com/hzi-braunschweig/SORMAS-DHIS/releases/download/released/sormas_HL7v_dockerized
 EXPOSE 6080

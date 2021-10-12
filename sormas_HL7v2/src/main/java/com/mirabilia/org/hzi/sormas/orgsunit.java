@@ -22,6 +22,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.google.gson.Gson;
+import com.mirabilia.org.hzi.sormas.DhisDataValue.FacilityData;
+import com.mirabilia.org.hzi.sormas.DhisDataValue.RegionData;
 
 /**
  *
@@ -53,43 +55,64 @@ public class orgsunit extends HttpServlet {
             Class.forName("org.postgresql.Driver");
             Connection conn = DbConnector.getPgConnection();
             String str = "";
-            System.out.println(request.getParameter("region"));
-            System.out.println("here");
-            List<String> rests = new ArrayList<>();
+            String resString;
+
+            List<RegionData> rests = new ArrayList<>();
+            List<FacilityData> FacRests = new ArrayList<>();
             //loop through sormas local and get infrastructure data by level into mysql local db for futher use by the adapter.
             try {
                 if (request.getParameter("region") != null && "yes".equals(request.getParameter("region"))) {
 
-                    ps = conn.prepareStatement("SELECT name as region FROM region;");
+                    ps = conn.prepareStatement("SELECT name as region, id as regionId FROM region;");
                     rx = ps.executeQuery();
                     while (rx.next()) {
-                        rests.add(rx.getString(1));
+                        RegionData rD = new RegionData(rx.getString(1), rx.getInt(2));
+                        rests.add(rD);
                     }
                 }
-                if (request.getParameter("regionSelected") != null) {
-                    String region = request.getParameter("regionSelected");
-                    System.out.println(region);
-                    ps = conn.prepareStatement("SELECT d.name as districts from district d left join region r on r.id = d.region_id where r.name = ?");
-                    ps.setString(1, region);
+                if (request.getParameter("districtSelected") != null) {
+                    int district = Integer.parseInt(request.getParameter("districtSelected"));
+                
+                    ps = conn.prepareStatement("SELECT name, id FROM community where district_id  = ?");
+                    ps.setInt(1, district);
                     rx = ps.executeQuery();
                     while (rx.next()) {
-                        rests.add(rx.getString(1));
+
+                        RegionData rD = new RegionData(rx.getString(1), rx.getInt(2));
+                        rests.add(rD);
                     }
                 }
 
-                if (request.getParameter("districtSelected") != null) {
-                    String district = request.getParameter("districtSelected");
-                    System.out.println(district);
-                    ps = conn.prepareStatement("SELECT d.name as facilities from facility d left join district r on r.id = d.district_id where r.name = ?");
-                    ps.setString(1, district);
+                if (request.getParameter("subDistrictSelected") != null) {
+                    int district = Integer.parseInt(request.getParameter("subDistrictSelected"));
+
+                    ps = conn.prepareStatement("SELECT d.name as facilityName , d.externalid as facilityId FROM facility d where d.externalid is not null AND d.community_id = ?");
+
+                    ps.setInt(1, district);
                     rx = ps.executeQuery();
                     while (rx.next()) {
-                        rests.add(rx.getString(1));
+                        FacilityData rD = new FacilityData(rx.getString(1), rx.getString(2));
+                        FacRests.add(rD);
+                    }
+                }
+
+                if (request.getParameter("regionSelected") != null) {
+                    int region = Integer.parseInt(request.getParameter("regionSelected"));
+                    ps = conn.prepareStatement("SELECT d.name as districts, d.id as districtsId from district d left join region r on r.id = d.region_id where r.id = ?");
+                    ps.setInt(1, region);
+                    rx = ps.executeQuery();
+                    while (rx.next()) {
+                        RegionData rD = new RegionData(rx.getString(1), rx.getInt(2));
+                        rests.add(rD);
                     }
                 }
 
                 conn.close();
-                String resString = this.gson.toJson(rests);
+                if (request.getParameter("subDistrictSelected") != null) {
+                    resString = this.gson.toJson(FacRests);
+                } else {
+                    resString = this.gson.toJson(rests);
+                }
                 PrintWriter out = response.getWriter();
                 response.setContentType("application/json");
                 response.setCharacterEncoding("UTF-8");

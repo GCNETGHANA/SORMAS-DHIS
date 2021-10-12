@@ -5,7 +5,7 @@
     for (int t = 1; t < 6;) {
 
         frs = 0;
-        int lst = 500;
+        int lst = 900;
 
         System.out.println(t);
 

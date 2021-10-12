@@ -193,6 +193,8 @@ public class analysisDTO {
                 }
 
                 //  System.out.println("Total at SORCE 1 : " + rx.getString(1));
+                System.out.println("stack size =: " + stack);
+                System.out.println("fieldList size =: " + fieldList.size());
                 System.out.println("number of round made = " + ro);
             }
             System.out.println(lister);
@@ -202,6 +204,7 @@ public class analysisDTO {
             out.print("SQLState: " + ex.getSQLState());
             out.print("VendorError: " + ex.getErrorCode());
         }
+        System.out.println("fastSender ENDS HERE........... ");
     }
 
     public static void WARD_HF_fastSender(int primer, int destin, int t_val) throws ClassNotFoundException {
@@ -441,7 +444,7 @@ public class analysisDTO {
                         ps_ = conn.prepareStatement("update sormas_local set externalid = ?, duplicate_with = '' where idx = ? and externalid is null");
                         ps_.setString(1, words[0]);
                         ps_.setString(2, rx.getString(2));
-                        System.out.println(ps_.toString());
+                        System.out.println("Prepared statement for Deduplicate() "+ps_.toString());
                         ps_.executeUpdate();
                     }
                 }
@@ -451,6 +454,7 @@ public class analysisDTO {
         } finally {
             conn.close();
         }
+        System.out.println("Deduplicate() ENDS HERE..... ");
     }
 
     public static void Localizer(String ch, String cm, String cc, String cdt) throws ClassNotFoundException, SQLException {

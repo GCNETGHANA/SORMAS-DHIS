@@ -23,7 +23,7 @@
                                 </a>
                                 <ul class="nav nav-treeview">
                                     <li class="nav-item">
-                                        <a href="/fhir_frontend/adapter_frontend.jsp" class="nav-link">
+                                        <a href="adapter_frontend.jsp" class="nav-link">
                                             <i class="fas fa-chart-bar nav-icon"></i>
                                             <p style="font-size:12px">Dashboard</p>
                                         </a>
@@ -70,10 +70,43 @@
                                             <p style="font-size:12px">Operations</p>
                                         </a>
                                     </li-->
+                                   
+                                </ul>
+                            </li>
+
+                            
+                              <li class="nav-item has-treeview menu-open" id="caxl">
+                                <a href="#" class="nav-link" onclick="report()">
+                                    <p style="font-size:14px">
+                                        Reporting
+                                        <i class="right fas fa-angle-left"></i>
+                                    </p>
+                                </a>
+                                
+                                <ul class="nav nav-treeview">
+                                    <!--li class="nav-item">
+                                        <a href="#" class="nav-link">
+                                            <i class="fas fa-chart-bar nav-icon"></i>
+                                            <p style="font-size:12px">Dashboard</p>
+                                        </a>
+                                    </li-->
+                                   
+                                    <!--li class="nav-item">
+                                        <a href="sormas2.html" class="nav-link">
+                                            <i class="fas fa-exchange-alt nav-icon"></i>
+                                            <p style="font-size:12px">Operations</p>
+                                        </a>
+                                    </li-->
                                     <li class="nav-item">
                                         <a href="greport.jsp" class="nav-link">
                                             <i class="fas fa-file nav-icon"></i>
                                             <p style="font-size:12px">Generate Report</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="reportconfig.jsp" class="nav-link">
+                                            <i class="fas fa-cogs nav-icon"></i>
+                                            <p style="font-size:12px">Report configuration</p>
                                         </a>
                                     </li>
                                 </ul>
