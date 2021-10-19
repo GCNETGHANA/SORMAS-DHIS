@@ -377,216 +377,172 @@ public class greport extends HttpServlet {
             }
         }
 
-        return "SELECT\n"
-                + "\n"
-                + "COALESCE(f.externalid, '') orgUnit,\n"
-                + "\n"
-                + "TO_CHAR(COALESCE(c.classificationdate, c.reportdate), 'YYYYMM') \"period\",\n"
-                + "\n"
-                + "CASE\n"
-                + age_gender_when_clause
-                + "\n"
-                + "END categoryOptionCombo,\n"
-                + "\n"
-                + "CASE h.testresult\n"
-                + "\n"
-                + "WHEN NULL THEN NULL\n"
-                + "else 'ws1Zf3jodFM'\n"
-                + "\n"
-                + "END dataElement,\n"
-                + "\n"
-                + "COUNT(distinct(c.id)) \"value\"\n"
-                + "\n"
-                + "FROM cases c\n"
-                + "\n"
-                + "LEFT JOIN person p ON c.person_id = p.id\n"
-                + "\n"
-                + "LEFT JOIN facility f ON c.healthfacility_id = f.id\n"
-                + "\n"
-                + "LEFT JOIN samples s ON c.id = s.associatedcase_id\n"
-                + "\n"
-                + "LEFT JOIN pathogentest h ON s.id = h.sample_id\n"
-                + "\n"
-                + "WHERE\n"
-                + where 
-                + "\n"
-                + "h.testresult IS NOT NULL \n"
-                + "\n"
-                + "AND date_part('year', COALESCE(h.creationdate)) = :year\n"
-                + "\n"
-                + "AND date_part('month', COALESCE(h.creationdate)) = :month\n"
-                + "\n"
-                + "AND c.disease = 'CORONAVIRUS'\n"
-                + "\n"
-                + "GROUP BY\n"
-                + "\n"
-                + "f.externalid,\n"
-                + "\n"
-                + "to_char(COALESCE(c.classificationdate, c.reportdate), 'YYYYMM'),\n"
-                + "h.testresult,\n"
-                + "\n"
-                + "CASE\n"
-                + age_gender_when_clause
-                + "\n"
-                + "END,\n"
-                + "\n"
-                + "c.caseclassification";
+        return
+              " SELECT\n"
+            + "     COALESCE(f.externalid, '') orgUnit,\n"
+            + "     TO_CHAR(COALESCE(c.classificationdate, c.reportdate), 'YYYYMM') \"period\",\n"
+            + "     CASE\n"
+            +           age_gender_when_clause + "\n"
+            + "     END categoryOptionCombo,\n"
+            + "     CASE h.testresult\n"
+            + "         WHEN NULL THEN NULL\n"
+            + "         ELSE 'ws1Zf3jodFM'\n"
+            + "     END dataElement,\n"
+            + "     COUNT(distinct(c.id)) \"value\"\n"
+            + " FROM cases c\n"
+            + "     LEFT JOIN person p ON c.person_id = p.id\n"
+            + "     LEFT JOIN facility f ON c.healthfacility_id = f.id\n"
+            + "     LEFT JOIN samples s ON c.id = s.associatedcase_id\n"
+            + "     LEFT JOIN pathogentest h ON s.id = h.sample_id\n"
+            + " WHERE\n"
+            +       where + "\n"
+            + "     h.testresult IS NOT NULL \n"
+            + "     AND date_part('year', COALESCE(h.creationdate)) = :year\n"
+            + "     AND date_part('month', COALESCE(h.creationdate)) = :month\n"
+            + "     AND c.disease = 'CORONAVIRUS'\n"
+            + " GROUP BY\n"
+            + "     f.externalid,\n"
+            + "     to_char(COALESCE(c.classificationdate, c.reportdate), 'YYYYMM'),\n"
+            + "     h.testresult,\n"
+            + "     CASE\n"
+            +           age_gender_when_clause + "\n"
+            + "     END,\n"
+            + "     c.caseclassification";
     }
 
-    
     static String lab_results(String where){
-        return " SELECT\n" +
-"      COALESCE (f.externalid, '') orgUnit,\n" +
-"      TO_CHAR( COALESCE ( C.classificationdate, C.reportdate ), 'YYYYMM' ) \"period\",\n" +
-"      CASE\n" +
-"         h.testresult \n" +
-"         WHEN\n" +
-"            'PENDING' \n" +
-"         THEN\n" +
-"            'HllvX50cXC0' \n" +
-"		else 'HllvX50cXC0'\n" +
-"      END\n" +
-"      categoryOptionCombo, \n" +
-"      CASE\n" +
-"         h.testresult \n" +
-"         WHEN\n" +
-"            'PENDING' \n" +
-"         THEN\n" +
-"            'tLXtycv8mUh' \n" +
-"		else 'Mbty4SXtpxg'\n" +
-"      END\n" +
-"      dataElement, COUNT (C.ID) \"value\" \n" +
-"   FROM\n" +
-"      cases C \n" +
-"      LEFT JOIN\n" +
-"         person P \n" +
-"         ON C.person_id = P.ID \n" +
-"      LEFT JOIN\n" +
-"         facility f \n" +
-"         ON C.healthfacility_id = f.ID \n" +
-"      LEFT JOIN\n" +
-"         samples s \n" +
-"         ON C.ID = s.associatedcase_id \n" +
-"      LEFT JOIN\n" +
-"         pathogentest h \n" +
-"         ON s.ID = h.sample_id \n" +
-"   WHERE\n" + where  +
-"      h.testresult = 'PENDING' \n" +
-"      AND date_part( 'year', COALESCE (h.creationdate) ) = :year \n" +
-"      AND date_part( 'month', COALESCE (h.creationdate) ) = :month \n" +
-"      AND C.disease = 'CORONAVIRUS' \n" +
-"   GROUP BY\n" +
-"      f.externalid, to_char( COALESCE ( C.classificationdate, C.reportdate ), 'YYYYMM' ), h.testresult ";
+        return 
+              " SELECT \n"
+            + "     COALESCE(f.externalid, '') orgUnit,\n"
+            + "     TO_CHAR(COALESCE(C.classificationdate, C.reportdate), 'YYYYMM') \"period\",\n"
+            + "     CASE h.testresult \n"
+            + "         WHEN 'PENDING' THEN 'HllvX50cXC0' \n"
+            + "         ELSE 'HllvX50cXC0'\n"
+            + "     END categoryOptionCombo, \n"
+            + "     CASE h.testresult \n"
+            + "         WHEN 'PENDING' THEN 'tLXtycv8mUh' \n"
+            + "	        ELSE 'Mbty4SXtpxg'\n"
+            + "     END dataElement, \n"
+            + "     COUNT(C.ID) \"value\" \n"
+            + " FROM \n"
+            + "     cases C \n"
+            + "     LEFT JOIN person P ON C.person_id = P.ID \n"
+            + "     LEFT JOIN facility f ON C.healthfacility_id = f.ID \n"
+            + "     LEFT JOIN samples s ON C.ID = s.associatedcase_id \n"
+            + "     LEFT JOIN pathogentest h ON s.ID = h.sample_id \n"
+            + " WHERE \n"
+            +       where + "\n"
+            + "     h.testresult = 'PENDING' \n"
+            + "     AND date_part('year', COALESCE(h.creationdate)) = :year \n"
+            + "     AND date_part('month', COALESCE(h.creationdate)) = :month \n"
+            + "     AND C.disease = 'CORONAVIRUS' \n"
+            + " GROUP BY \n"
+            + "     f.externalid, \n"
+            + "     to_char(COALESCE(C.classificationdate, C.reportdate), 'YYYYMM'), \n"
+            + "     h.testresult";
     }
-    
-    
-    
-    
-    
     
     static String cases_in_icu(String where){
-        return "SELECT COALESCE\n" +
-"	( f.externalid, '' ) orgUnit,\n" +
-"	TO_CHAR( COALESCE ( h.intensivecareunitstart, h.admissiondate ), 'YYYYMM' ) \"period\",\n" +
-"CASE\n" +
-"		h.intensivecareunit \n" +
-"		WHEN 'YES' THEN\n" +
-"		'HllvX50cXC0' \n" +
-"	END categoryOptionCombo,\n" +
-"CASE\n" +
-"	h.intensivecareunit \n" +
-"	WHEN 'YES' THEN\n" +
-"	'UIbgJ9wH2C6' \n" +
-"	END dataElement,\n" +
-"	COUNT ( DISTINCT ( C.ID ) ) \"value\" \n" +
-"FROM\n" +
-"	cases\n" +
-"	C LEFT JOIN person P ON C.person_id = P.\n" +
-"	ID LEFT JOIN facility f ON C.healthfacility_id = f.\n" +
-"	ID LEFT JOIN hospitalization h ON C.hospitalization_id = h.ID \n" +
-"WHERE\n" + where +
-"	date_part( 'year', COALESCE ( h.intensivecareunitstart, h.admissiondate ) ) = :year \n" +
-"	AND date_part( 'month', COALESCE ( h.intensivecareunitstart, h.admissiondate ) ) = :month \n" +
-"	AND C.disease = 'CORONAVIRUS' \n" +
-"GROUP BY\n" +
-"	f.externalid,\n" +
-"	to_char( COALESCE ( h.intensivecareunitstart, h.admissiondate ), 'YYYYMM' ),\n" +
-"	h.intensivecareunit";
+        return
+              " SELECT \n"
+            + "     COALESCE(f.externalid, '') orgUnit,\n"
+            + "     TO_CHAR(COALESCE(h.intensivecareunitstart, h.admissiondate), 'YYYYMM') \"period\",\n"
+            + "     CASE h.intensivecareunit \n"
+            + "		    WHEN 'YES' THEN 'HllvX50cXC0' \n"
+            + "     END categoryOptionCombo,\n"
+            + "     CASE h.intensivecareunit \n"
+            + "	        WHEN 'YES' THEN 'UIbgJ9wH2C6' \n"
+            + "     END dataElement,\n"
+            + "     COUNT(DISTINCT(C.ID)) \"value\" \n"
+            + " FROM\n"
+            + "     cases C \n"
+            + "     LEFT JOIN person P ON C.person_id = P.ID \n"
+            + "     LEFT JOIN facility f ON C.healthfacility_id = f.ID \n"
+            + "     LEFT JOIN hospitalization h ON C.hospitalization_id = h.ID \n"
+            + " WHERE \n"
+            +       where + "\n"
+            + "     date_part('year', COALESCE(h.intensivecareunitstart, h.admissiondate)) = :year \n"
+            + "     AND date_part('month', COALESCE(h.intensivecareunitstart, h.admissiondate)) = :month \n"
+            + "     AND C.disease = 'CORONAVIRUS' \n"
+            + " GROUP BY \n"
+            + "     f.externalid,\n"
+            + "     to_char(COALESCE(h.intensivecareunitstart, h.admissiondate), 'YYYYMM'),\n"
+            + "     h.intensivecareunit";
     }
     
-    
     static String cases_by_treatment(String where){
-        return "SELECT COALESCE\n" +
-"	( f.externalid, '' ) orgUnit,\n" +
-"	TO_CHAR( COALESCE ( T.treatmentdatetime ), 'YYYYMM' ) \"period\",\n" +
-"CASE\n" +
-"		T.treatmenttype \n" +
-"	WHEN NULL THEN\n" +
-"		NULL ELSE'HllvX50cXC0' \n" +
-"	END categoryOptionCombo,\n" +
-"CASE\n" +
-"	T.treatmenttype \n" +
-"	WHEN 'INVASIVE_MECHANICAL_VENTILATION' THEN\n" +
-"	'UPKwAOWlnfT' \n" +
-"	WHEN 'OXYGEN_THERAPY' THEN\n" +
-"	'OgN0gpmQScF' \n" +
-"	END dataElement,\n" +
-"	COUNT ( DISTINCT ( C.ID ) ) \"value\" \n" +
-"FROM\n" +
-"	cases\n" +
-"	C LEFT JOIN person P ON C.person_id = P.\n" +
-"	ID LEFT JOIN facility f ON C.healthfacility_id = f.\n" +
-"	ID LEFT JOIN treatment T ON T.therapy_id = C.therapy_id \n" +
-"WHERE\n" + where +
-"	date_part( 'year', COALESCE ( T.treatmentdatetime ) ) = :year \n" +
-"	AND date_part( 'month', COALESCE ( T.treatmentdatetime ) ) = :month \n" +
-"	AND C.disease = 'CORONAVIRUS' \n" +
-"GROUP BY\n" +
-"	f.externalid,\n" +
-"	to_char( COALESCE ( T.treatmentdatetime ), 'YYYYMM' ),\n" +
-"	T.treatmenttype";
+        return
+              " SELECT \n"
+            + "     COALESCE(f.externalid, '') orgUnit,\n"
+            + "     TO_CHAR(COALESCE(T.treatmentdatetime), 'YYYYMM') \"period\",\n"
+            + "     CASE T.treatmenttype \n"
+            + "         WHEN NULL THEN NULL \n"
+            + "         ELSE 'HllvX50cXC0' \n"
+            + "     END categoryOptionCombo,\n"
+            + "     CASE T.treatmenttype \n"
+            + "         WHEN 'INVASIVE_MECHANICAL_VENTILATION' \n"
+            + "             THEN 'UPKwAOWlnfT' \n"
+            + "         WHEN 'OXYGEN_THERAPY' \n"
+            + "             THEN 'OgN0gpmQScF' \n"
+            + "     END dataElement,\n"
+            + "     COUNT(DISTINCT(C.ID)) \"value\" \n"
+            + " FROM \n"
+            + "     cases C \n"
+            + "     LEFT JOIN person P ON C.person_id = P.ID \n"
+            + "     LEFT JOIN facility f ON C.healthfacility_id = f.ID \n"
+            + "     LEFT JOIN treatment T ON T.therapy_id = C.therapy_id \n"
+            + " WHERE \n"
+            +       where
+            + "     date_part('year', COALESCE(T.treatmentdatetime)) = :year \n"
+            + "     AND date_part('month', COALESCE(T.treatmentdatetime)) = :month \n"
+            + "     AND C.disease = 'CORONAVIRUS' \n"
+            + " GROUP BY \n"
+            + "	    f.externalid,\n"
+            + "	    to_char(COALESCE(T.treatmentdatetime), 'YYYYMM'),\n"
+            + "	    T.treatmenttype";
     }
     
     static String cases_by_origin(String where){
-        return "SELECT COALESCE\n" +
-"	( f.externalid, '' ) orgUnit,\n" +
-"	TO_CHAR( COALESCE ( C.creationdate ), 'YYYYMM' ) \"period\",\n" +
-"CASE\n" +
-"		C.caseorigin \n" +
-"	WHEN NULL THEN\n" +
-"		NULL ELSE'HllvX50cXC0' \n" +
-"	END categoryOptionCombo,\n" +
-"CASE\n" +
-"	\n" +
-"	WHEN C.caseorigin = 'POINT_OF_ENTRY' \n" +
-"	AND C.caseclassification = 'SUSPECT' THEN\n" +
-"	'mvZaCAISwWW' \n" +
-"	WHEN C.caseorigin = 'IN_COUNTRY' \n" +
-"	AND C.caseclassification = 'SUSPECT' THEN\n" +
-"	'iUYqseHElNb' \n" +
-"	WHEN C.caseorigin = 'POINT_OF_ENTRY' \n" +
-"	AND C.caseclassification = 'CONFIRMED' THEN\n" +
-"	'KmzXt7SEY5d' \n" +
-"	WHEN C.caseorigin = 'IN_COUNTRY' \n" +
-"	AND C.caseclassification = 'CONFIRMED' THEN\n" +
-"	'aQ8B5d4K35h' \n" +
-"	END dataElement,\n" +
-"	COUNT ( C.ID ) \"value\" \n" +
-"FROM\n" +
-"	cases\n" +
-"	C LEFT JOIN person P ON C.person_id = P.\n" +
-"	ID LEFT JOIN facility f ON C.healthfacility_id = f.ID \n" +
-"WHERE\n" + where +
-"	date_part( 'year', COALESCE ( C.creationdate ) ) = :year \n" +
-"	AND date_part( 'month', COALESCE ( C.creationdate ) ) = :month \n" +
-"	AND C.disease = 'CORONAVIRUS' \n" +
-"GROUP BY\n" +
-"	f.externalid,\n" +
-"	to_char( COALESCE ( C.creationdate ), 'YYYYMM' ),\n" +
-"	C.caseorigin,\n" +
-"	C.caseclassification,\n" +
-"	C.creationdate ";
+        return 
+              " SELECT \n"
+            + "     COALESCE(f.externalid, '') orgUnit,\n"
+            + "     TO_CHAR(COALESCE(C.creationdate), 'YYYYMM') \"period\",\n"
+            + "     CASE C.caseorigin \n"
+            + "	        WHEN NULL THEN NULL \n"
+            + "		    ELSE 'HllvX50cXC0' \n"
+            + "	    END categoryOptionCombo,\n"
+            + "     CASE\n"
+            + "	        WHEN C.caseorigin = 'POINT_OF_ENTRY' \n"
+            + "	            AND C.caseclassification = 'SUSPECT'"
+            + "             THEN 'mvZaCAISwWW' \n"
+            + "	        WHEN C.caseorigin = 'IN_COUNTRY' \n"
+            + "	            AND C.caseclassification = 'SUSPECT'\n"
+            + "             THEN'iUYqseHElNb' \n"
+            + "         WHEN C.caseorigin = 'POINT_OF_ENTRY' \n"
+            + "             AND C.caseclassification = 'CONFIRMED' \n"
+            + "             THEN 'KmzXt7SEY5d' \n"
+            + "	        WHEN C.caseorigin = 'IN_COUNTRY' \n"
+            + "	            AND C.caseclassification = 'CONFIRMED' \n"
+            + "	            THEN 'aQ8B5d4K35h' \n"
+            + "	    END dataElement,\n"
+            + "	    COUNT(C.ID) \"value\" \n"
+            + " FROM\n"
+            + "	    cases C\n"
+            + "	    LEFT JOIN person P ON C.person_id = P.ID \n"
+            + "	    LEFT JOIN facility f ON C.healthfacility_id = f.ID \n"
+            + " WHERE\n"
+            +       where + "\n"
+            + "	    date_part('year', COALESCE(C.creationdate)) = :year \n"
+            + "	    AND date_part('month', COALESCE(C.creationdate)) = :month \n"
+            + "	    AND C.disease = 'CORONAVIRUS' \n"
+            + " GROUP BY\n"
+            + "	    f.externalid,\n"
+            + "	    to_char(COALESCE(C.creationdate), 'YYYYMM'),\n"
+            + "	    C.caseorigin,\n"
+            + "	    C.caseclassification,\n"
+            + "	    C.creationdate";
     }
+
     public static Map<String, String> getBody(HttpServletRequest request) throws IOException {
 
         String body = null;
@@ -626,5 +582,4 @@ public class greport extends HttpServlet {
         }
         return sMap;
     }
-
 }
