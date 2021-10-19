@@ -366,11 +366,6 @@ public class greport extends HttpServlet {
 
     static String report_case_tested(String where) {
 
-        String classifications_when_clause = "";
-        for (CaseReportByClassification n : CaseReportByClassification.list()) {
-            classifications_when_clause += "\nWHEN '" + n.code + "' THEN '" + n.dataElement() + "'";
-        }
-
         String age_gender_when_clause = "";
         for (AgeRange age : AgeRange.list()) {
             for (Gender gender : Gender.list()) {
