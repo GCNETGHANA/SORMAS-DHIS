@@ -58,10 +58,18 @@ public class DataElement {
         _list.add(new DataElement("Number of new confirmed cases", "MLWvGWMYfvl"));
 
         _list.add(new DataElement("Number of new cases hospitalised", "TO8IanhHkHA"));
-        _list.add(new DataElement("Suspected cases by transmission classification\\t", "X75THcHgnjq"));
         _list.add(new DataElement("Number of cases tested", "MBVAaUTsYi6"));
         _list.add(new DataElement("Number of new cases treated", "tEeMGqyVCVx"));
-        _list.add(new DataElement("Confirmed cases by transmission classification", "PbR7KDrmkUV"));
+
+        _list.add(new DataElement("Suspected cases by transmission classification (Imported)", "mvZaCAISwWW"));
+        _list.add(new DataElement("Suspected cases by transmission classification (Known Cluster)", "KOEB1VJ2Tf4"));
+        _list.add(new DataElement("Suspected cases by transmission classification (Community Transmission)", "iUYqseHElNb"));
+        _list.add(new DataElement("Suspected cases by transmission classification (Unknown)", "Q9PdHoD68L5"));
+
+        _list.add(new DataElement("Confirmed cases by transmission classification (Imported)", "KmzXt7SEY5d"));
+        _list.add(new DataElement("Confirmed cases by transmission classification (Known Cluster)", "rEj9VQ2kPJW"));
+        _list.add(new DataElement("Confirmed cases by transmission classification (Community Transmission)", "aQ8B5d4K35h"));
+        _list.add(new DataElement("Confirmed cases by transmission classification (Unknown)", "lNlEfwFEoZV"));
 
         return _list;
     }
