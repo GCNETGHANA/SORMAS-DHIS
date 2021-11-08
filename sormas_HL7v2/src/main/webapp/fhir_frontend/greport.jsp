@@ -381,9 +381,7 @@
 
 
             <script>
-                var cPath = "/tools/dhims";
-                // var cPath = "";
-                // var cpath = window.location.pathname.substring(1, window.location.pathname.indexOf("/",3));
+                var cPath = "/tools/dhims";            
 
                 function countrySelect(val){
                     if($("#countrySelector").is(':checked')){
@@ -395,9 +393,6 @@
                     }
                 }
                 function getRegions(){
-                        // console.log("cpath path is: " + cpath);
-                        console.log("cPath path is: " + cPath);
-
                       $.ajax({
                         type: "GET",
                         url: cPath+'/orgsunit',
