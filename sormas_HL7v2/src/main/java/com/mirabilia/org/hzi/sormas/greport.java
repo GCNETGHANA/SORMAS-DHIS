@@ -110,7 +110,7 @@ public class greport extends HttpServlet {
                 dhimsList.add(dh);
             }
 
-            System.out.println("all orgUnits for report: " + dhimsList.size());
+            System.out.println("all orgUnits for report: [" + dhimsList.size() + "]\n" + gson.toJson(dhimsList));
 
             List<DhimsDataValue> dhimsList2 = new ArrayList<DhimsDataValue>();
             for (DhimsDataValue d : dhimsList) {
@@ -121,7 +121,7 @@ public class greport extends HttpServlet {
             dhimsList = dhimsList2;
             dhimsList2 = null;
 
-            System.out.println("valid orgUnits for report: " + dhimsList.size());
+            System.out.println("valid orgUnits for report: [" + dhimsList.size() + "]\n" + gson.toJson(dhimsList));
 
             ServeResponse resp = DHIS2resolver.PostMethod("/api/dataValueSets", dhimsList, "dataValues");
             String resString = this.gson.toJson(resp);
@@ -495,19 +495,20 @@ public class greport extends HttpServlet {
             + "     COALESCE(f.externalid, '') orgUnit,\n"
             + "     TO_CHAR(COALESCE(C.creationdate), 'YYYYMM') \"period\",\n"
             + "     'Joer6DI3Xaf' categoryOptionCombo,\n"
-            + "     CASE\n"
-            + "	        WHEN C.caseorigin = 'POINT_OF_ENTRY' \n"
-            + "	            AND C.caseclassification = 'SUSPECT'"
-            + "             THEN 'mvZaCAISwWW' \n"
-            + "	        WHEN C.caseorigin = 'IN_COUNTRY' \n"
-            + "	            AND C.caseclassification = 'SUSPECT'\n"
-            + "             THEN'iUYqseHElNb' \n"
-            + "         WHEN C.caseorigin = 'POINT_OF_ENTRY' \n"
-            + "             AND C.caseclassification = 'CONFIRMED' \n"
-            + "             THEN 'KmzXt7SEY5d' \n"
-            + "	        WHEN C.caseorigin = 'IN_COUNTRY' \n"
-            + "	            AND C.caseclassification = 'CONFIRMED' \n"
-            + "	            THEN 'aQ8B5d4K35h' \n"
+            + "     CASE C.caseclassification \n"
+            + "         WHEN 'SUSPECT' THEN \n"
+            + "             CASE C.caseorigin \n"
+            + "	                WHEN 'POINT_OF_ENTRY' THEN 'mvZaCAISwWW' \n"
+            + "	                WHEN 'IN_COUNTRY' THEN 'iUYqseHElNb' \n"
+            + "                 ELSE NULL \n"
+            + "             END \n"
+            + "         WHEN 'CONFIRMED' THEN \n"
+            + "             CASE C.caseorigin \n"
+            + "	                WHEN 'POINT_OF_ENTRY' THEN 'KmzXt7SEY5d' \n"
+            + "	                WHEN 'IN_COUNTRY' THEN 'aQ8B5d4K35h' \n"
+            + "                 ELSE NULL \n"
+            + "             END \n"
+            + "         ELSE NULL \n"
             + "	    END dataElement,\n"
             + "	    COUNT(C.ID) \"value\" \n"
             + " FROM\n"
