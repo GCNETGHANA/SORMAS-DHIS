@@ -260,7 +260,8 @@
                                                         <label>Select Year</label>
                                                         <br>
                                                         <select name="year" class="form-control js-select2" id="state_x" >
-                                                            <option selected>2021</option>
+                                                            <option selected>2022</option>
+                                                            <option >2021</option>
                                                             <option >2020</option>
                                                             <option >2019</option>
                                                             <option >2018</option>
@@ -381,7 +382,7 @@
 
 
             <script>
-                var cPath = "/tools/dhims";            
+                var cPath = "";//"/tools/dhims";            
 
                 function countrySelect(val){
                     if($("#countrySelector").is(':checked')){
