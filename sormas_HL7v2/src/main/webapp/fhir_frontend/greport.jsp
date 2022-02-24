@@ -382,7 +382,7 @@
 
 
             <script>
-                var cPath = "";//"/tools/dhims";            
+                var cPath = "/tools/dhims";            
 
                 function countrySelect(val){
                     if($("#countrySelector").is(':checked')){
