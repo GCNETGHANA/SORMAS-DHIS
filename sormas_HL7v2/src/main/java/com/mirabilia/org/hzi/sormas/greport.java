@@ -144,11 +144,13 @@ public class greport extends HttpServlet {
     public static void AutoPost(int year, int month){
          int district = 0, region  = 0, subDistrict = 0;
          String facility = "";
-         
+
+
         try {
             Class.forName("org.postgresql.Driver");
             Connection conn = DbConnector.getPgConnection();
             ResultSet rx;
+
 
             List<String> queries = new ArrayList<String>();
             String where = getWhereClauses(region, district, facility, subDistrict);
@@ -162,6 +164,7 @@ public class greport extends HttpServlet {
             queries.add(cases_by_treatment(where));
              queries.add(cases_by_origin(where));
 
+
             String query
                     = "WITH q AS (\n"
                     + String.join("\nUNION\n", queries) + "\n"
@@ -169,6 +172,7 @@ public class greport extends HttpServlet {
                     + "SELECT * FROM q WHERE dataElement IS NOT NULL AND categoryOptionCombo IS NOT NULL";
             System.out.println(query);
             // System.out.println("\n\n\n\n\n\n\n\nquery for report: \n" + query);
+
 
             NamedParameterStatement ps = new NamedParameterStatement(conn, query);
             ps.setInt("year", year);
@@ -178,6 +182,7 @@ public class greport extends HttpServlet {
 
             List<DhimsDataValue> dhimsList = new ArrayList<DhimsDataValue>();
             while (rx.next()) {
+
                 DhimsDataValue dh = new DhimsDataValue(rx.getString("dataElement"), rx.getString("categoryOptionCombo"), rx.getString("period"), rx.getString("orgUnit"), rx.getString("value"));
                 dhimsList.add(dh);
             }
@@ -488,44 +493,73 @@ public class greport extends HttpServlet {
             + "	    to_char(COALESCE(T.treatmentdatetime), 'YYYYMM'),\n"
             + "	    T.treatmenttype";
     }
-    
+
     static String cases_by_origin(String where){
-        return 
-              " SELECT \n"
-            + "     COALESCE(f.externalid, '') orgUnit,\n"
-            + "     TO_CHAR(COALESCE(C.creationdate), 'YYYYMM') \"period\",\n"
-            + "     'Joer6DI3Xaf' categoryOptionCombo,\n"
-            + "     CASE C.caseclassification \n"
-            + "         WHEN 'SUSPECT' THEN \n"
-            + "             CASE C.caseorigin \n"
-            + "	                WHEN 'POINT_OF_ENTRY' THEN 'mvZaCAISwWW' \n"
-            + "	                WHEN 'IN_COUNTRY' THEN 'iUYqseHElNb' \n"
-            + "                 ELSE NULL \n"
-            + "             END \n"
-            + "         WHEN 'CONFIRMED' THEN \n"
-            + "             CASE C.caseorigin \n"
-            + "	                WHEN 'POINT_OF_ENTRY' THEN 'KmzXt7SEY5d' \n"
-            + "	                WHEN 'IN_COUNTRY' THEN 'aQ8B5d4K35h' \n"
-            + "                 ELSE NULL \n"
-            + "             END \n"
-            + "         ELSE NULL \n"
-            + "	    END dataElement,\n"
-            + "	    COUNT(C.ID) \"value\" \n"
-            + " FROM\n"
-            + "	    cases C\n"
-            + "	    LEFT JOIN person P ON C.person_id = P.ID \n"
-            + "	    LEFT JOIN facility f ON C.healthfacility_id = f.ID \n"
-            + " WHERE\n"
-            +       where + "\n"
-            + "	    date_part('year', COALESCE(C.creationdate)) = :year \n"
-            + "	    AND date_part('month', COALESCE(C.creationdate)) = :month \n"
-            + "	    AND C.disease = 'CORONAVIRUS' \n"
-            + " GROUP BY\n"
-            + "	    f.externalid,\n"
-            + "	    to_char(COALESCE(C.creationdate), 'YYYYMM'),\n"
-            + "	    C.caseorigin,\n"
-            + "	    C.caseclassification,\n"
-            + "	    C.creationdate";
+        return
+
+                " SELECT \n"
+                        + "     COALESCE(f.externalid, '') orgUnit,\n"
+                        + "     TO_CHAR(COALESCE(C.creationdate), 'YYYYMM') \"period\",\n"
+                        + "     'Joer6DI3Xaf' categoryOptionCombo,\n"
+                        + "     CASE C.caseclassification \n"
+                        + "         WHEN 'SUSPECT' THEN \n"
+                        + "             CASE C.caseorigin \n"
+                        + "	                WHEN 'POINT_OF_ENTRY' THEN  \n"
+                        + "	            CASE C.casetransmissionclassification  \n"
+                        + "	                WHEN 'UNKWOWN' THEN 'Q9PdHoD68L5' \n"
+                        + "	                WHEN 'KNOWN_CLUSTER' THEN 'KOEB1VJ2Tf4' \n"
+                        + "	                WHEN 'COMMUNITY_TRANSMISSION' THEN 'iUYqseHElNb' \n"
+                        + "                 ELSE NULL \n"
+                        + "                 END \n"
+                        + "                 WHEN 'IN_COUNTRY' THEN  \n"
+                        + "	            CASE C.casetransmissionclassification  \n"
+                        + "	                WHEN 'UNKWOWN' THEN 'Q9PdHoD68L5' \n"
+                        + "	                WHEN 'KNOWN_CLUSTER' THEN 'KOEB1VJ2Tf4' \n"
+                        + "	                WHEN 'COMMUNITY_TRANSMISSION' THEN 'iUYqseHElNb' \n"
+                        + "                 ELSE NULL \n"
+                        + "                 END \n"
+                        + "                 ELSE NULL \n"
+                        + "                 END \n"
+                        + "         WHEN 'CONFIRMED' THEN \n"
+                        + "             CASE C.caseorigin \n"
+                        + "	                WHEN 'POINT_OF_ENTRY' THEN  \n"
+                        + "	            CASE C.casetransmissionclassification \n"
+                        + "	                WHEN 'UNKNOWN' THEN 'lNlEfwFEoZV' \n"
+                        + "	                WHEN 'KNOWN_CLUSTER' THEN 'rEj9VQ2kPJW' \n"
+                        + "	                WHEN 'COMMUNITY_TRANSMISSION' THEN 'aQ8B5d4K35h' \n"
+                        + "	            ELSE NULL \n"
+                        + "	            END \n"
+                        + "	                WHEN 'IN_COUNTRY' THEN  \n"
+                        + "	           CASE c.casetransmissionclassification \n"
+                        + "	                WHEN 'UNKNOWN' THEN 'lNlEfwFEoZV' \n"
+                        + "	                WHEN 'KNOWN_CLUSTER' THEN 'rEj9VQ2kPJW' \n"
+                        + "	                WHEN 'COMMUNITY_TRANSMISSION' THEN 'aQ8B5d4K35h' \n"
+                        + "         ELSE NULL \n"
+                        + "         END \n"
+                        + "         ELSE NULL \n"
+                        + "         END \n"
+                        + "         ELSE NULL \n"
+                        + "	    END dataElement,\n"
+                        + "	    COUNT(C.ID) \"value\" \n"
+                        + " FROM\n"
+                        + "	    cases C\n"
+                        + "	    LEFT JOIN person P ON C.person_id = P.ID \n"
+                        + "	    LEFT JOIN facility f ON C.healthfacility_id = f.ID \n"
+                        + " WHERE\n"
+                        +       where + "\n"
+                        + "	    date_part('year', COALESCE(C.creationdate)) = :year \n"
+                        + "	    AND date_part('month', COALESCE(C.creationdate)) = :month \n"
+                        + "	    AND C.disease = 'CORONAVIRUS' \n"
+                        + " GROUP BY\n"
+                        + "	    f.externalid,\n"
+                        + "	    to_char(COALESCE(C.creationdate), 'YYYYMM'),\n"
+                        + "	    C.caseorigin,\n"
+                        + "	    C.casetransmissionclassification,\n"
+                        + "	    C.caseclassification,\n"
+                        + "	    C.creationdate";
+
+
+
     }
 
     public static Map<String, String> getBody(HttpServletRequest request) throws IOException {
