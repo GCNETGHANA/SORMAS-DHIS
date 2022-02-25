@@ -495,7 +495,7 @@ public class greport extends HttpServlet {
         return
               " SELECT \n"
             + "     COALESCE(f.externalid, '') orgUnit,\n"
-            + "     TO_CHAR(COALESCE(C.creationdate), 'YYYYMM') \"period\",\n"
+            + "     TO_CHAR(COALESCE(C.reportdate), 'YYYYMM') \"period\",\n"
             + "     'Joer6DI3Xaf' categoryOptionCombo,\n"
             + "     CASE C.caseclassification \n"
             + "         WHEN 'SUSPECT' THEN \n"
@@ -543,16 +543,16 @@ public class greport extends HttpServlet {
             + "	    LEFT JOIN facility f ON C.healthfacility_id = f.ID \n"
             + " WHERE\n"
             +       where + "\n"
-            + "	    date_part('year', COALESCE(C.creationdate)) = :year \n"
-            + "	    AND date_part('month', COALESCE(C.creationdate)) = :month \n"
+            + "	    date_part('year', COALESCE(C.reportdate)) = :year \n"
+            + "	    AND date_part('month', COALESCE(C.reportdate)) = :month \n"
             + "	    AND C.disease = 'CORONAVIRUS' \n"
             + " GROUP BY\n"
             + "	    f.externalid,\n"
-            + "	    to_char(COALESCE(C.creationdate), 'YYYYMM'),\n"
+            + "	    to_char(COALESCE(C.reportdate), 'YYYYMM'),\n"
             + "	    C.caseorigin,\n"
             + "	    C.casetransmissionclassification,\n"
             + "	    C.caseclassification,\n"
-            + "	    C.creationdate";
+            + "	    C.reportdate";
     }
 
     public static Map<String, String> getBody(HttpServletRequest request) throws IOException {
