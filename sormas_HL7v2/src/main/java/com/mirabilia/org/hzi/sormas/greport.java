@@ -140,7 +140,6 @@ public class greport extends HttpServlet {
         }
     }
     
-    
     public static void AutoPost(int year, int month){
          int district = 0, region  = 0, subDistrict = 0;
          String facility = "";
@@ -182,7 +181,6 @@ public class greport extends HttpServlet {
 
             List<DhimsDataValue> dhimsList = new ArrayList<DhimsDataValue>();
             while (rx.next()) {
-
                 DhimsDataValue dh = new DhimsDataValue(rx.getString("dataElement"), rx.getString("categoryOptionCombo"), rx.getString("period"), rx.getString("orgUnit"), rx.getString("value"));
                 dhimsList.add(dh);
             }
@@ -212,8 +210,7 @@ public class greport extends HttpServlet {
         }
         
     }
-    
-    
+     
     static String getWhereClauses(int region, int district, String facility, int subDistrict){
             if(!"0".equals(facility) && !"".equals(facility)){
                 return "f.externalId = '"+facility+"' AND ";
@@ -496,70 +493,66 @@ public class greport extends HttpServlet {
 
     static String cases_by_origin(String where){
         return
-
-                " SELECT \n"
-                        + "     COALESCE(f.externalid, '') orgUnit,\n"
-                        + "     TO_CHAR(COALESCE(C.creationdate), 'YYYYMM') \"period\",\n"
-                        + "     'Joer6DI3Xaf' categoryOptionCombo,\n"
-                        + "     CASE C.caseclassification \n"
-                        + "         WHEN 'SUSPECT' THEN \n"
-                        + "             CASE C.caseorigin \n"
-                        + "	                WHEN 'POINT_OF_ENTRY' THEN  \n"
-                        + "	            CASE C.casetransmissionclassification  \n"
-                        + "	                WHEN 'UNKWOWN' THEN 'Q9PdHoD68L5' \n"
-                        + "	                WHEN 'KNOWN_CLUSTER' THEN 'KOEB1VJ2Tf4' \n"
-                        + "	                WHEN 'COMMUNITY_TRANSMISSION' THEN 'iUYqseHElNb' \n"
-                        + "                 ELSE NULL \n"
-                        + "                 END \n"
-                        + "                 WHEN 'IN_COUNTRY' THEN  \n"
-                        + "	            CASE C.casetransmissionclassification  \n"
-                        + "	                WHEN 'UNKWOWN' THEN 'Q9PdHoD68L5' \n"
-                        + "	                WHEN 'KNOWN_CLUSTER' THEN 'KOEB1VJ2Tf4' \n"
-                        + "	                WHEN 'COMMUNITY_TRANSMISSION' THEN 'iUYqseHElNb' \n"
-                        + "                 ELSE NULL \n"
-                        + "                 END \n"
-                        + "                 ELSE NULL \n"
-                        + "                 END \n"
-                        + "         WHEN 'CONFIRMED' THEN \n"
-                        + "             CASE C.caseorigin \n"
-                        + "	                WHEN 'POINT_OF_ENTRY' THEN  \n"
-                        + "	            CASE C.casetransmissionclassification \n"
-                        + "	                WHEN 'UNKNOWN' THEN 'lNlEfwFEoZV' \n"
-                        + "	                WHEN 'KNOWN_CLUSTER' THEN 'rEj9VQ2kPJW' \n"
-                        + "	                WHEN 'COMMUNITY_TRANSMISSION' THEN 'aQ8B5d4K35h' \n"
-                        + "	            ELSE NULL \n"
-                        + "	            END \n"
-                        + "	                WHEN 'IN_COUNTRY' THEN  \n"
-                        + "	           CASE c.casetransmissionclassification \n"
-                        + "	                WHEN 'UNKNOWN' THEN 'lNlEfwFEoZV' \n"
-                        + "	                WHEN 'KNOWN_CLUSTER' THEN 'rEj9VQ2kPJW' \n"
-                        + "	                WHEN 'COMMUNITY_TRANSMISSION' THEN 'aQ8B5d4K35h' \n"
-                        + "         ELSE NULL \n"
-                        + "         END \n"
-                        + "         ELSE NULL \n"
-                        + "         END \n"
-                        + "         ELSE NULL \n"
-                        + "	    END dataElement,\n"
-                        + "	    COUNT(C.ID) \"value\" \n"
-                        + " FROM\n"
-                        + "	    cases C\n"
-                        + "	    LEFT JOIN person P ON C.person_id = P.ID \n"
-                        + "	    LEFT JOIN facility f ON C.healthfacility_id = f.ID \n"
-                        + " WHERE\n"
-                        +       where + "\n"
-                        + "	    date_part('year', COALESCE(C.creationdate)) = :year \n"
-                        + "	    AND date_part('month', COALESCE(C.creationdate)) = :month \n"
-                        + "	    AND C.disease = 'CORONAVIRUS' \n"
-                        + " GROUP BY\n"
-                        + "	    f.externalid,\n"
-                        + "	    to_char(COALESCE(C.creationdate), 'YYYYMM'),\n"
-                        + "	    C.caseorigin,\n"
-                        + "	    C.casetransmissionclassification,\n"
-                        + "	    C.caseclassification,\n"
-                        + "	    C.creationdate";
-
-
-
+              " SELECT \n"
+            + "     COALESCE(f.externalid, '') orgUnit,\n"
+            + "     TO_CHAR(COALESCE(C.creationdate), 'YYYYMM') \"period\",\n"
+            + "     'Joer6DI3Xaf' categoryOptionCombo,\n"
+            + "     CASE C.caseclassification \n"
+            + "         WHEN 'SUSPECT' THEN \n"
+            + "             CASE C.caseorigin \n"
+            + "	                WHEN 'POINT_OF_ENTRY' THEN  \n"
+            + "	            CASE C.casetransmissionclassification  \n"
+            + "	                WHEN 'UNKWOWN' THEN 'Q9PdHoD68L5' \n"
+            + "	                WHEN 'KNOWN_CLUSTER' THEN 'KOEB1VJ2Tf4' \n"
+            + "	                WHEN 'COMMUNITY_TRANSMISSION' THEN 'iUYqseHElNb' \n"
+            + "                 ELSE NULL \n"
+            + "                 END \n"
+            + "                 WHEN 'IN_COUNTRY' THEN  \n"
+            + "	            CASE C.casetransmissionclassification  \n"
+            + "	                WHEN 'UNKWOWN' THEN 'Q9PdHoD68L5' \n"
+            + "	                WHEN 'KNOWN_CLUSTER' THEN 'KOEB1VJ2Tf4' \n"
+            + "	                WHEN 'COMMUNITY_TRANSMISSION' THEN 'iUYqseHElNb' \n"
+            + "                 ELSE NULL \n"
+            + "                 END \n"
+            + "                 ELSE NULL \n"
+            + "                 END \n"
+            + "         WHEN 'CONFIRMED' THEN \n"
+            + "             CASE C.caseorigin \n"
+            + "	                WHEN 'POINT_OF_ENTRY' THEN  \n"
+            + "	            CASE C.casetransmissionclassification \n"
+            + "	                WHEN 'UNKNOWN' THEN 'lNlEfwFEoZV' \n"
+            + "	                WHEN 'KNOWN_CLUSTER' THEN 'rEj9VQ2kPJW' \n"
+            + "	                WHEN 'COMMUNITY_TRANSMISSION' THEN 'aQ8B5d4K35h' \n"
+            + "	            ELSE NULL \n"
+            + "	            END \n"
+            + "	                WHEN 'IN_COUNTRY' THEN  \n"
+            + "	           CASE c.casetransmissionclassification \n"
+            + "	                WHEN 'UNKNOWN' THEN 'lNlEfwFEoZV' \n"
+            + "	                WHEN 'KNOWN_CLUSTER' THEN 'rEj9VQ2kPJW' \n"
+            + "	                WHEN 'COMMUNITY_TRANSMISSION' THEN 'aQ8B5d4K35h' \n"
+            + "         ELSE NULL \n"
+            + "         END \n"
+            + "         ELSE NULL \n"
+            + "         END \n"
+            + "         ELSE NULL \n"
+            + "	    END dataElement,\n"
+            + "	    COUNT(C.ID) \"value\" \n"
+            + " FROM\n"
+            + "	    cases C\n"
+            + "	    LEFT JOIN person P ON C.person_id = P.ID \n"
+            + "	    LEFT JOIN facility f ON C.healthfacility_id = f.ID \n"
+            + " WHERE\n"
+            +       where + "\n"
+            + "	    date_part('year', COALESCE(C.creationdate)) = :year \n"
+            + "	    AND date_part('month', COALESCE(C.creationdate)) = :month \n"
+            + "	    AND C.disease = 'CORONAVIRUS' \n"
+            + " GROUP BY\n"
+            + "	    f.externalid,\n"
+            + "	    to_char(COALESCE(C.creationdate), 'YYYYMM'),\n"
+            + "	    C.caseorigin,\n"
+            + "	    C.casetransmissionclassification,\n"
+            + "	    C.caseclassification,\n"
+            + "	    C.creationdate";
     }
 
     public static Map<String, String> getBody(HttpServletRequest request) throws IOException {
