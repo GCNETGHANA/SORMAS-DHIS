@@ -19,7 +19,7 @@ jobs:
       name: Dockerize
       with:
         image: epareto/apps
-        tags: sormas-dhims-adapter--v1, sormas-lab-results-ready-notifier--latest
+        tags: sormas-dhims-adapter--v1, sormas-dhims-adapter--latest
         dockerfile: Dockerfile
         registry: docker.io
         username: ${{ secrets.DOCKER_ID }}
