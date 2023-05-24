@@ -379,10 +379,16 @@
 
 
             <jsp:include page="template/scripts_footer.jsp"></jsp:include>
-
+            
+			 <script src="../config.js"></script>
 
             <script>
-                var cPath = "/tools/dhims";            
+
+            
+
+            var cPath = gOptions.adapter_path;            
+            
+                //var cPath = "/tools/dhims";           
 
                 function countrySelect(val){
                     if($("#countrySelector").is(':checked')){

@@ -941,7 +941,7 @@ public class UtilServer extends HttpServlet {
                         dxs = "insert into community (uuid,name,externalid,id,changedate,creationdate, district_id) values(?,?,?,?,now(),?,'" + stt + "') ON CONFLICT DO NOTHING";
                     } else if ("5".equals(rx.getString(5))) {
                         fac_l++;
-                        dxs = "insert into facility (uuid,name,externalid,id,changedate,creationdate, community_id) values(?,?,?,?,now(),?,'" + stt + "') ON CONFLICT DO NOTHING";
+                        dxs = "insert into facility (uuid,name,externalid,id,changedate,creationdate, community_id, publicownership) values(?,?,?,?,now(),?,'" + stt + "',false) ON CONFLICT DO NOTHING";
                     } else if ("1".equals(rx.getString(5))) {
                         vk = 0;
                     }

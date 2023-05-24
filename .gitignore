@@ -10,3 +10,4 @@ docker-compose.yml
 hzi_adapters.sql
 sormas-old.conf
 sormas.conf
+/.metadata/
