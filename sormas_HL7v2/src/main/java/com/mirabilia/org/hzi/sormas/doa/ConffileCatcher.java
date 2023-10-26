@@ -30,6 +30,7 @@ public class ConffileCatcher {
             
             String dhis_url = "";
             String fhir_url = "";
+            String backend_base_url = "";
             
             String instance_country = "";
             String instance_code = "";
@@ -110,6 +111,11 @@ public class ConffileCatcher {
                     fhir_url = val;
                 }
 
+                 if (data.contains("backend_base_url =")) {
+                   String val = data.replaceAll("backend_base_url", "").replaceAll(" ", "").replaceAll("=", "");
+                    backend_base_url = val;
+                }
+
             }
 
             myReader.close();
@@ -126,7 +132,7 @@ public class ConffileCatcher {
                 System.out.println("UNAUTHORIZED ACCESS DETECTED");
             }
             
-        String[] arr = new String[14];
+        String[] arr = new String[15];
         arr[0] = val_host;
         arr[1] = val_port;
         arr[2] = val_name;
@@ -142,6 +148,8 @@ public class ConffileCatcher {
         arr[11] = fhir_url;
         arr[12] = instance_country;
         arr[13] = instance_code;
+
+        arr[14] = backend_base_url;
         
         return arr;
 

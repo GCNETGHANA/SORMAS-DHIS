@@ -8,6 +8,8 @@
 <%@page import="java.sql.PreparedStatement"%>
 <%@page import="java.sql.PreparedStatement"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page import="com.mirabilia.org.hzi.sormas.doa.ConffileCatcher"%>
+
 <!DOCTYPE html>
 <html lang="en">
     <jsp:include page="template/head.jsp"></jsp:include>
@@ -377,6 +379,10 @@
                 <div id="overlay" onclick="off()">
                     <div id="text"><h2>please wait...</h2></div></div>
 
+                    <%
+                        String[] _url = ConffileCatcher.fileCatcher("passed");
+                    //    System.out.println("values : "+_url[1].toString() + _url[13].toString());
+                    %>
 
             <jsp:include page="template/scripts_footer.jsp"></jsp:include>
             
@@ -388,7 +394,7 @@
 
             var cPath = gOptions.adapter_path;            
             
-                //var cPath = "/tools/dhims";           
+                var cPath = "<%=_url[14]%>";           
 
                 function countrySelect(val){
                     if($("#countrySelector").is(':checked')){
@@ -402,7 +408,7 @@
                 function getRegions(){
                       $.ajax({
                         type: "GET",
-                        url: cPath+'/orgsunit',
+                        url: cPath+"/orgsunit",
                         data: {
                             region: "yes"
                         },
